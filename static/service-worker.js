@@ -1,81 +1,91 @@
 const CACHE_NAME = 'lea-constant-games-v1';
-const urlsToCache = [
+
+// Fichiers essentiels à mettre en cache
+const FILES_TO_CACHE = [
   '/',
   '/static/game_results.js',
   '/static/background.png',
-  '/static/results/0_1_2.png',
-  '/static/results/3_4.png',
-  '/static/results/7_8.png',
-  '/static/results/9_10.png',
-  '/flag-game/',
-  '/toulouse/',
-  '/top14-quiz/',
 ];
 
-// Installation du Service Worker
+// Installation - Cache uniquement les fichiers qui existent
 self.addEventListener('install', (event) => {
-  console.log('Service Worker: Installing...');
+  console.log('[ServiceWorker] Install');
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Service Worker: Caching files');
-        return cache.addAll(urlsToCache);
-      })
-      .then(() => self.skipWaiting())
-  );
-});
+    caches.open(CACHE_NAME).then(async (cache) => {
+      console.log('[ServiceWorker] Caching app shell');
 
-// Activation du Service Worker
-self.addEventListener('activate', (event) => {
-  console.log('Service Worker: Activating...');
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            console.log('Service Worker: Clearing old cache');
-            return caches.delete(cache);
+      // Cache les fichiers un par un pour éviter qu'une erreur bloque tout
+      const cachePromises = FILES_TO_CACHE.map(async (url) => {
+        try {
+          const response = await fetch(url);
+          if (response.ok) {
+            await cache.put(url, response);
+            console.log('[ServiceWorker] Cached:', url);
+          } else {
+            console.warn('[ServiceWorker] Failed to cache (not found):', url);
           }
-        })
-      );
+        } catch (error) {
+          console.warn('[ServiceWorker] Failed to cache:', url, error);
+        }
+      });
+
+      await Promise.all(cachePromises);
+      console.log('[ServiceWorker] All files cached');
     })
   );
-  return self.clients.claim();
+  self.skipWaiting();
 });
 
-// Stratégie: Cache First, puis Network
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Retourne depuis le cache si disponible
-        if (response) {
-          console.log('Service Worker: Serving from cache:', event.request.url);
-          return response;
+// Activation
+self.addEventListener('activate', (event) => {
+  console.log('[ServiceWorker] Activate');
+  event.waitUntil(
+    caches.keys().then((keyList) => {
+      return Promise.all(keyList.map((key) => {
+        if (key !== CACHE_NAME) {
+          console.log('[ServiceWorker] Removing old cache', key);
+          return caches.delete(key);
         }
+      }));
+    })
+  );
+  self.clients.claim();
+});
 
-        // Sinon, fetch depuis le réseau et met en cache
-        return fetch(event.request)
-          .then((response) => {
-            // Vérifie si la réponse est valide
-            if (!response || response.status !== 200 || response.type === 'error') {
-              return response;
-            }
+// Fetch - Network First, fallback to Cache
+self.addEventListener('fetch', (event) => {
+  // Ignore les requêtes non-GET
+  if (event.request.method !== 'GET') {
+    return;
+  }
 
-            // Clone la réponse
-            const responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          })
-          .catch(() => {
-            // Si offline et pas dans le cache, retourne une page d'erreur
-            console.log('Service Worker: Offline and not cached:', event.request.url);
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        // Si la réponse est OK, on la met en cache
+        if (response && response.status === 200) {
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+            console.log('[ServiceWorker] Cached new resource:', event.request.url);
           });
+        }
+        return response;
+      })
+      .catch(() => {
+        // Si le réseau échoue, on cherche dans le cache
+        console.log('[ServiceWorker] Network failed, trying cache:', event.request.url);
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            console.log('[ServiceWorker] Found in cache:', event.request.url);
+            return cachedResponse;
+          }
+
+          // Si c'est une page HTML, retourne la page d'accueil
+          if (event.request.headers.get('accept').includes('text/html')) {
+            return caches.match('/');
+          }
+        });
       })
   );
 });

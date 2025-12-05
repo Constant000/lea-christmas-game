@@ -32,6 +32,19 @@
             position: relative;
         }
 
+        /* Responsive container */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+            }
+        }
+
         .back-btn {
             position: absolute;
             top: 20px;
@@ -46,12 +59,23 @@
             transition: all 0.3s;
             text-decoration: none;
             display: inline-block;
+            z-index: 10;
         }
 
         .back-btn:hover {
             background: #444;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Responsive back button */
+        @media (max-width: 480px) {
+            .back-btn {
+                padding: 8px 12px;
+                font-size: 0.9em;
+                top: 10px;
+                left: 10px;
+            }
         }
 
         .header {
@@ -66,6 +90,26 @@
             color: #667eea;
         }
 
+        /* Responsive header */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+                margin-bottom: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                margin-top: 30px;
+                margin-bottom: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 10px;
+            }
+        }
+
         .stats {
             display: flex;
             justify-content: center;
@@ -73,10 +117,26 @@
             font-size: 1.3rem;
             font-weight: bold;
             color: #333;
+            flex-wrap: wrap;
         }
 
         .stats span {
             color: #667eea;
+        }
+
+        /* Responsive stats */
+        @media (max-width: 768px) {
+            .stats {
+                gap: 20px;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats {
+                gap: 15px;
+                font-size: 0.95rem;
+            }
         }
 
         .question {
@@ -87,11 +147,40 @@
             font-weight: bold;
         }
 
+        /* Responsive question */
+        @media (max-width: 768px) {
+            .question {
+                font-size: 1.4rem;
+                margin-bottom: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .question {
+                font-size: 1.1rem;
+                margin-bottom: 20px;
+            }
+        }
+
         .options {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
             margin-bottom: 20px;
+        }
+
+        /* Responsive options - Grille symétrique sur mobile */
+        @media (max-width: 768px) {
+            .options {
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .options {
+                gap: 10px;
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .option-card {
@@ -102,12 +191,40 @@
             transition: all 0.3s ease;
             background: white;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 200px;
+        }
+
+        /* Responsive option card - Hauteur fixe pour symétrie */
+        @media (max-width: 768px) {
+            .option-card {
+                padding: 15px;
+                min-height: 180px;
+                border-width: 2px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .option-card {
+                padding: 10px;
+                min-height: 160px;
+                border-radius: 10px;
+            }
         }
 
         .option-card:hover:not(.disabled) {
             background: #f0f0ff;
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        @media (max-width: 480px) {
+            .option-card:hover:not(.disabled) {
+                transform: translateY(-2px);
+            }
         }
 
         .option-card.disabled {
@@ -130,20 +247,71 @@
             width: 100%;
             max-width: 200px;
             height: auto;
+            aspect-ratio: 3/2;
+            object-fit: cover;
             border-radius: 8px;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
             margin-bottom: 15px;
+        }
+
+        /* Responsive flag image - Taille fixe pour symétrie */
+        @media (max-width: 768px) {
+            .flag-image {
+                max-width: 150px;
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .flag-image {
+                max-width: 100%;
+                height: 60px;
+                margin-bottom: 8px;
+            }
         }
 
         .country-name {
             font-size: 1.3rem;
             font-weight: bold;
             margin-bottom: 10px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Responsive country name */
+        @media (max-width: 768px) {
+            .country-name {
+                font-size: 1.1rem;
+                margin-bottom: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .country-name {
+                font-size: 0.85rem;
+                margin-bottom: 5px;
+                line-height: 1.2;
+            }
         }
 
         .country-value {
             font-size: 1rem;
             color: #666;
+        }
+
+        /* Responsive country value */
+        @media (max-width: 768px) {
+            .country-value {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .country-value {
+                font-size: 0.75rem;
+            }
         }
 
         .country-value.revealed {
@@ -175,6 +343,14 @@
             color: #ef4444;
         }
 
+        /* Responsive result message */
+        @media (max-width: 480px) {
+            .result-message {
+                font-size: 1.1rem;
+                margin-bottom: 15px;
+            }
+        }
+
         .next-btn {
             padding: 15px 40px;
             font-size: 1.2rem;
@@ -193,6 +369,14 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
 
+        /* Responsive button */
+        @media (max-width: 480px) {
+            .next-btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+        }
+
         .game-over {
             text-align: center;
         }
@@ -203,6 +387,19 @@
             margin-bottom: 20px;
         }
 
+        /* Responsive game over */
+        @media (max-width: 768px) {
+            .game-over h2 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-over h2 {
+                font-size: 1.5rem;
+            }
+        }
+
         .final-stats {
             font-size: 1.5rem;
             margin-bottom: 15px;
@@ -211,6 +408,13 @@
         .final-score {
             color: #667eea;
             font-weight: bold;
+        }
+
+        /* Responsive final stats */
+        @media (max-width: 480px) {
+            .final-stats {
+                font-size: 1.2rem;
+            }
         }
 
         .hidden {
@@ -227,11 +431,27 @@
             display: block;
         }
 
+        /* Responsive result image */
+        @media (max-width: 480px) {
+            .result-image {
+                max-width: 100%;
+                margin: 15px auto;
+            }
+        }
+
         .game-over .result-message {
             font-size: 1.3rem;
             color: #666;
             margin: 20px 0;
             line-height: 1.6;
+        }
+
+        /* Responsive game over message */
+        @media (max-width: 480px) {
+            .game-over .result-message {
+                font-size: 1rem;
+                margin: 15px 0;
+            }
         }
     </style>
 </head>
@@ -258,7 +478,7 @@
 
             <div id="result" class="result hidden">
                 <div id="result-message" class="result-message"></div>
-                <button class="next-btn" onclick="nextQuestion()">Next Question →</button>
+                <button class="next-btn" onclick="nextQuestion()">Question suivante →</button>
             </div>
         </div>
 
@@ -267,11 +487,11 @@
             <img id="result-img" class="result-image" src="" alt="Résultat">
             <p id="result-msg" class="result-message"></p>
             <div class="final-stats">
-                <p class="final-score">Final Score: <span id="final-score">0</span> / 10</p>
-                <p>Best Streak: <span id="best-streak">0</span> 🔥</p>
-                <p>Accuracy: <span id="accuracy">0</span>%</p>
+                <p class="final-score">Score final: <span id="final-score">0</span> / 10</p>
+                <p>Meilleure série: <span id="best-streak">0</span> 🔥</p>
+                <p>Précision: <span id="accuracy">0</span>%</p>
             </div>
-            <button class="next-btn" onclick="restartGame()">Play Again</button>
+            <button class="next-btn" onclick="restartGame()">Rejouer</button>
         </div>
     </div>
 
