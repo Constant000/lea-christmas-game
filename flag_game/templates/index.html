@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 Flag Comparison Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .question {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 40px;
+            font-weight: bold;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .option-card {
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            text-align: center;
+        }
+
+        .option-card:hover:not(.disabled) {
+            background: #f0f0ff;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .option-card.disabled {
+            cursor: not-allowed;
+        }
+
+        .option-card.correct {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .option-card.wrong {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: white;
+        }
+
+        .flag-image {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 15px;
+        }
+
+        .country-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .country-value {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .country-value.revealed {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .result {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .result-message {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .result-message.correct {
+            color: #10b981;
+        }
+
+        .result-message.wrong {
+            color: #ef4444;
+        }
+
+        .next-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .next-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .game-over {
+            text-align: center;
+        }
+
+        .game-over h2 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .final-stats {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .final-score {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 Flag Comparison Game</h1>
+            <div class="stats">
+                <span>Score: <span id="score">0</span></span>
+                <span>Streak: <span id="streak">0</span> 🔥</span>
+                <span>Question: <span id="question-num">1</span>/10</span>
+            </div>
+        </div>
+
+        <div class="game-card">
+            <div id="game-content">
+                <div class="question" id="question-text">
+                    Which country has the highest population?
+                </div>
+
+                <div class="options" id="options-container">
+                    <!-- Options will be inserted here -->
+                </div>
+
+                <div id="result" class="result hidden">
+                    <div id="result-message" class="result-message"></div>
+                    <button class="next-btn" onclick="nextQuestion()">Next Question →</button>
+                </div>
+            </div>
+
+            <div id="game-over" class="game-over hidden">
+                <h2>🎮 Game Over! 🎮</h2>
+                <div class="final-stats">
+                    <p class="final-score">Final Score: <span id="final-score">0</span></p>
+                    <p>Best Streak: <span id="best-streak">0</span> 🔥</p>
+                    <p>Accuracy: <span id="accuracy">0</span>%</p>
+                </div>
+                <button class="next-btn" onclick="restartGame()">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let streak = 0;
+        let bestStreak = 0;
+        let questionNum = 0;
+        let currentCorrectAnswer = '';
+        let currentMetric = '';
+        const maxQuestions = 10;
+
+        function formatNumber(num, metric) {
+            if (metric === 'population') {
+                return num.toLocaleString();
+            } else if (metric === 'area') {
+                return num.toLocaleString() + ' km²';
+            } else if (metric === 'gdp') {
+                // GDP is already in millions in the CSV
+                if (num >= 1000000) {
+                    return '$' + (num / 1000000).toFixed(2) + 'T';
+                } else if (num >= 1000) {
+                    return '$' + (num / 1000).toFixed(2) + 'B';
+                } else {
+                    return '$' + num.toFixed(2) + 'M';
+                }
+            } else if (metric === 'density') {
+                return num.toFixed(1) + ' per km²';
+            }
+            return num.toLocaleString();
+        }
+
+        async function loadQuestion() {
+            try {
+                const response = await fetch('/api/question');
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+
+                currentCorrectAnswer = data.correct_answer;
+                currentMetric = data.metric;
+
+                // Update question text
+                document.getElementById('question-text').textContent = data.question;
+
+                // Create option cards
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+
+                data.options.forEach(option => {
+                    const card = document.createElement('div');
+                    card.className = 'option-card';
+                    card.onclick = () => checkAnswer(option.name, card);
+
+                    card.innerHTML = `
+                        <img src="/flags/${option.iso2}.png" alt="${option.name}" class="flag-image">
+                        <div class="country-name">${option.name}</div>
+                        <div class="country-value" data-value="${option.value}">???</div>
+                    `;
+
+                    optionsContainer.appendChild(card);
+                });
+
+                // Hide result
+                document.getElementById('result').classList.add('hidden');
+
+            } catch (error) {
+                console.error('Error loading question:', error);
+                alert('Failed to load question');
+            }
+        }
+
+        function checkAnswer(selectedAnswer, selectedCard) {
+            const isCorrect = selectedAnswer === currentCorrectAnswer;
+
+            // Disable all cards and reveal values
+            const cards = document.querySelectorAll('.option-card');
+            cards.forEach(card => {
+                card.classList.add('disabled');
+
+                const countryName = card.querySelector('.country-name').textContent;
+                const valueDiv = card.querySelector('.country-value');
+                const value = parseInt(valueDiv.dataset.value);
+
+                valueDiv.textContent = formatNumber(value, currentMetric);
+                valueDiv.classList.add('revealed');
+
+                if (countryName === currentCorrectAnswer) {
+                    card.classList.add('correct');
+                } else if (card === selectedCard && !isCorrect) {
+                    card.classList.add('wrong');
+                }
+            });
+
+            // Update score and streak
+            if (isCorrect) {
+                score += 10;
+                streak++;
+                if (streak > bestStreak) {
+                    bestStreak = streak;
+                }
+            } else {
+                streak = 0;
+            }
+
+            // Update display
+            document.getElementById('score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+
+            // Show result
+            const resultDiv = document.getElementById('result');
+            const resultMessage = document.getElementById('result-message');
+            resultDiv.classList.remove('hidden');
+
+            if (isCorrect) {
+                resultMessage.textContent = '✅ Correct! Well done!';
+                resultMessage.className = 'result-message correct';
+            } else {
+                resultMessage.textContent = `❌ Wrong! It was ${currentCorrectAnswer}`;
+                resultMessage.className = 'result-message wrong';
+            }
+
+            questionNum++;
+        }
+
+        function nextQuestion() {
+            if (questionNum >= maxQuestions) {
+                showGameOver();
+            } else {
+                document.getElementById('question-num').textContent = questionNum + 1;
+                loadQuestion();
+            }
+        }
+
+        function showGameOver() {
+            document.getElementById('game-content').classList.add('hidden');
+            document.getElementById('game-over').classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('best-streak').textContent = bestStreak;
+            document.getElementById('accuracy').textContent = ((score / (maxQuestions * 10)) * 100).toFixed(1);
+        }
+
+        function restartGame() {
+            score = 0;
+            streak = 0;
+            questionNum = 0;
+
+            document.getElementById('score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+            document.getElementById('question-num').textContent = 1;
+
+            document.getElementById('game-content').classList.remove('hidden');
+            document.getElementById('game-over').classList.add('hidden');
+
+            loadQuestion();
+        }
+
+        // Load first question on page load
+        loadQuestion();
+    </script>
+</body>
+</html>
