@@ -195,6 +195,8 @@
             </div>
         </div>
 
+        <a href="/" style="position: absolute; top: 20px; left: 20px; color: white; text-decoration: none; font-size: 1.5rem; background: rgba(0,0,0,0.2); padding: 10px 20px; border-radius: 10px;">← Back to Menu</a>
+
         <div class="game-card">
             <div id="game-content">
                 <div class="question" id="question-text">
@@ -254,7 +256,7 @@
 
         async function loadQuestion() {
             try {
-                const response = await fetch('/api/question');
+                const response = await fetch('/flag-game/api/question');  // Add /flag-game prefix
                 const data = await response.json();
 
                 if (data.error) {
@@ -265,10 +267,8 @@
                 currentCorrectAnswer = data.correct_answer;
                 currentMetric = data.metric;
 
-                // Update question text
                 document.getElementById('question-text').textContent = data.question;
 
-                // Create option cards
                 const optionsContainer = document.getElementById('options-container');
                 optionsContainer.innerHTML = '';
 
@@ -278,7 +278,7 @@
                     card.onclick = () => checkAnswer(option.name, card);
 
                     card.innerHTML = `
-                        <img src="/flags/${option.iso2}.png" alt="${option.name}" class="flag-image">
+                        <img src="/flag-game/flags/${option.iso2}.png" alt="${option.name}" class="flag-image">
                         <div class="country-name">${option.name}</div>
                         <div class="country-value" data-value="${option.value}">???</div>
                     `;
@@ -286,7 +286,6 @@
                     optionsContainer.appendChild(card);
                 });
 
-                // Hide result
                 document.getElementById('result').classList.add('hidden');
 
             } catch (error) {
