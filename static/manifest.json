@@ -1,0 +1,9 @@
+{
+  "name": "Jeux de Léa & Constant",
+  "short_name": "L&C Games",
+  "description": "Collection de jeux de géographie et rugby",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#667eea"
+}
