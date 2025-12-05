@@ -117,21 +117,29 @@ def get_question():
     sorted_countries = sorted(selected_countries, key=lambda x: x[metric], reverse=True)
     correct_country = sorted_countries[0]
 
+    # Rugby field conversion constant (1 field ≈ 10,000 m²)
+    RUGBY_FIELD_SIZE = 10000  # m²
+
     options = []
     for country in selected_countries:
+        value = country[metric]
+        # Convert area from km² to rugby fields
+        if metric == 'area':
+            value = int((value * 1_000_000) / RUGBY_FIELD_SIZE)  # km² to m² to rugby fields
+
         options.append({
             'name': country['name'],
             'iso2': country['iso2'],
-            'value': country[metric]
+            'value': value
         })
 
     random.shuffle(options)
 
     question_texts = {
-        'population': 'Which country has the HIGHEST population?',
-        'area': 'Which country has the LARGEST area?',
-        'gdp': 'Which country has the HIGHEST GDP?',
-        'density': 'Which country has the HIGHEST population density?'
+        'population': 'Allez ma loute, quel pays à la plus grande population ?',
+        'area': 'Quel pays a la plus grande superficie ?',
+        'gdp': 'Quel pays a le plus grand PIB ? (pas par habitant hein)',
+        'density': 'Quel pays à la plus forte densité ?'
     }
 
     return jsonify({
