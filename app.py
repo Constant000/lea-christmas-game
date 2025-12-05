@@ -10,10 +10,12 @@ app = Flask(__name__)
 
 # Import and register game blueprints
 from flag_game.game import flag_game_bp
-from rugby_game.game import toulouse_game_bp
+from toulouse_game.game import toulouse_game_bp
+from top14_quiz.game import top14_quiz_bp
 
 app.register_blueprint(flag_game_bp, url_prefix='/flag-game')
 app.register_blueprint(toulouse_game_bp, url_prefix='/toulouse')
+app.register_blueprint(top14_quiz_bp, url_prefix='/top14-quiz')
 
 @app.route('/')
 def index():

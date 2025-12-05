@@ -23,7 +23,7 @@ def load_countries():
     global countries_data
     countries_data = []
 
-    csv_path = Path(__file__).parent / 'countries.csv'
+    csv_path = Path(__file__).parent / 'stats/countries.csv'
 
     try:
         with open(csv_path, 'r', encoding='utf-8') as f:
