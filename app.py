@@ -35,12 +35,6 @@ def serve_result_image(filename):
     return send_from_directory(RESULTS_FOLDER, filename)
 
 
-@app.route('/manifest.json')
-def manifest():
-    """Serve PWA manifest."""
-    return send_file('static/manifest.json', mimetype='application/json')
-
-
 @app.route('/service-worker.js')
 def service_worker():
     """Serve service worker."""
