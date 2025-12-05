@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stade Toulousain - Devine le Joueur</title>
+    <script src="/static/game_results.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #c8102e 0%, #000000 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #666;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: #444;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #c8102e;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            margin-top: 20px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .score span {
+            color: #c8102e;
+            font-weight: bold;
+        }
+
+        .player-image {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .player-image img {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            object-fit: contain;
+        }
+
+        .question-section {
+            margin: 30px 0;
+        }
+
+        .question-section h3 {
+            color: #c8102e;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .option-btn {
+            padding: 15px 20px;
+            font-size: 1.1em;
+            border: 2px solid #c8102e;
+            background: white;
+            color: #c8102e;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #c8102e;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(200, 16, 46, 0.3);
+        }
+
+        .option-btn.correct {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .option-btn.wrong {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+
+        .result {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .result.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .result.wrong {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .next-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            background: #c8102e;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .next-btn:hover {
+            background: #a00d25;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(200, 16, 46, 0.3);
+        }
+
+        .game-over {
+            text-align: center;
+        }
+
+        .game-over h2 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .result-image {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin: 20px auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-message {
+            font-size: 1.3rem;
+            color: #666;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .final-stats {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .final-score {
+            color: #c8102e;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            color: #c8102e;
+            font-size: 1.5em;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn">← Menu</a>
+
+        <h1>🏉 Stade Toulousain</h1>
+        <p class="subtitle">Devine le joueur et son poste !</p>
+
+        <div class="score">
+            Score: <span id="score">0</span> / 10 | Question: <span id="question-num">1</span>/10
+        </div>
+
+        <div id="game-content">
+            <div class="player-image">
+                <img id="player-img" src="" alt="Joueur">
+            </div>
+
+            <div class="question-section">
+                <h3>Quel est le nom du joueur ?</h3>
+                <div class="options" id="name-options"></div>
+            </div>
+
+            <div class="question-section">
+                <h3>Quel est son poste ?</h3>
+                <div class="options" id="position-options"></div>
+            </div>
+
+            <div id="result" class="result hidden"></div>
+            <button id="next-btn" class="next-btn hidden">Question suivante</button>
+        </div>
+
+        <div id="game-over" class="game-over hidden">
+            <h2>🎮 Partie terminée ! 🎮</h2>
+            <img id="result-img" class="result-image" src="" alt="Résultat">
+            <p id="result-msg" class="result-message"></p>
+            <div class="final-stats">
+                <p class="final-score">Score final: <span id="final-score">0</span> / 10</p>
+                <p>Précision: <span id="accuracy">0</span>%</p>
+            </div>
+            <button class="next-btn" onclick="restartGame()">Rejouer</button>
+        </div>
+
+        <div id="loading" class="loading hidden">Chargement...</div>
+    </div>
+
+    <script>
+        let score = 0;
+        let questionNum = 0;
+        let currentQuestion = null;
+        let selectedName = null;
+        let selectedPosition = null;
+        const maxQuestions = 10;
+
+        const scoreEl = document.getElementById('score');
+        const questionNumEl = document.getElementById('question-num');
+        const playerImg = document.getElementById('player-img');
+        const nameOptionsEl = document.getElementById('name-options');
+        const positionOptionsEl = document.getElementById('position-options');
+        const resultEl = document.getElementById('result');
+        const nextBtn = document.getElementById('next-btn');
+        const gameContentEl = document.getElementById('game-content');
+        const gameOverEl = document.getElementById('game-over');
+        const loadingEl = document.getElementById('loading');
+
+        // Messages et images en fonction du score
+        const resultData = {
+            '0-3': {
+                image: 'https://media.giphy.com/media/l2JehQ2GitHGdVG9y/giphy.gif',
+                message: '😅 Aïe aïe aïe... Tu devrais peut-être regarder plus de matchs ! Allez, on ne lâche rien !'
+            },
+            '4-6': {
+                image: 'https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif',
+                message: '🤔 Pas mal, mais tu peux faire mieux ! Continue à t\'entraîner, champion !'
+            },
+            '7-9': {
+                image: 'https://media.giphy.com/media/g9582DNuQppxC/giphy.gif',
+                message: '👏 Bravo ! Tu connais bien ton Stade Toulousain ! Encore un petit effort pour la perfection !'
+            },
+            '10': {
+                image: 'https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif',
+                message: '🏆 PARFAIT ! Tu es un vrai expert du Stade Toulousain ! Chapeau l\'artiste ! 🎉'
+            }
+        };
+
+        async function loadQuestion() {
+            loadingEl.classList.remove('hidden');
+            gameContentEl.classList.add('hidden');
+
+            try {
+                const response = await fetch('/toulouse/api/question');
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Erreur de chargement');
+                }
+
+                currentQuestion = data;
+                selectedName = null;
+                selectedPosition = null;
+
+                playerImg.src = `/toulouse/players/${data.image}`;
+
+                // Create name options
+                nameOptionsEl.innerHTML = '';
+                data.name_options.forEach(name => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = name;
+                    btn.onclick = () => selectName(name, btn);
+                    nameOptionsEl.appendChild(btn);
+                });
+
+                // Create position options
+                positionOptionsEl.innerHTML = '';
+                data.position_options.forEach(position => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = position;
+                    btn.onclick = () => selectPosition(position, btn);
+                    positionOptionsEl.appendChild(btn);
+                });
+
+                resultEl.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+
+                loadingEl.classList.add('hidden');
+                gameContentEl.classList.remove('hidden');
+            } catch (error) {
+                console.error('Error loading question:', error);
+                loadingEl.textContent = 'Erreur de chargement: ' + error.message;
+            }
+        }
+
+        function selectName(name, btn) {
+            if (selectedName !== null) return;
+
+            selectedName = name;
+
+            nameOptionsEl.querySelectorAll('.option-btn').forEach(b => {
+                b.disabled = true;
+                if (b === btn) {
+                    b.style.background = '#764ba2';
+                    b.style.color = 'white';
+                }
+            });
+
+            checkAnswer();
+        }
+
+        function selectPosition(position, btn) {
+            if (selectedPosition !== null) return;
+
+            selectedPosition = position;
+
+            positionOptionsEl.querySelectorAll('.option-btn').forEach(b => {
+                b.disabled = true;
+                if (b === btn) {
+                    b.style.background = '#764ba2';
+                    b.style.color = 'white';
+                }
+            });
+
+            checkAnswer();
+        }
+
+        function checkAnswer() {
+            if (selectedName === null || selectedPosition === null) return;
+
+            const nameCorrect = selectedName === currentQuestion.correct_name;
+            const positionCorrect = selectedPosition === currentQuestion.correct_position;
+
+            nameOptionsEl.querySelectorAll('.option-btn').forEach(b => {
+                if (b.textContent === currentQuestion.correct_name) {
+                    b.classList.add('correct');
+                    b.style.background = '#28a745';
+                    b.style.borderColor = '#28a745';
+                } else if (b.textContent === selectedName && !nameCorrect) {
+                    b.classList.add('wrong');
+                    b.style.background = '#dc3545';
+                    b.style.borderColor = '#dc3545';
+                }
+            });
+
+            positionOptionsEl.querySelectorAll('.option-btn').forEach(b => {
+                if (b.textContent === currentQuestion.correct_position) {
+                    b.classList.add('correct');
+                    b.style.background = '#28a745';
+                    b.style.borderColor = '#28a745';
+                } else if (b.textContent === selectedPosition && !positionCorrect) {
+                    b.classList.add('wrong');
+                    b.style.background = '#dc3545';
+                    b.style.borderColor = '#dc3545';
+                }
+            });
+
+            if (nameCorrect && positionCorrect) {
+                score++;
+                scoreEl.textContent = score;
+                resultEl.textContent = `✅ Bravo ! C'est bien ${currentQuestion.correct_name}, ${currentQuestion.correct_position} !`;
+                resultEl.className = 'result correct';
+            } else if (nameCorrect) {
+                resultEl.textContent = `⚠️ Bon nom, mais c'est un ${currentQuestion.correct_position}, pas ${selectedPosition}`;
+                resultEl.className = 'result wrong';
+            } else if (positionCorrect) {
+                resultEl.textContent = `⚠️ Bon poste, mais c'est ${currentQuestion.correct_name}, pas ${selectedName}`;
+                resultEl.className = 'result wrong';
+            } else {
+                resultEl.textContent = `❌ C'est ${currentQuestion.correct_name}, ${currentQuestion.correct_position}`;
+                resultEl.className = 'result wrong';
+            }
+
+            resultEl.classList.remove('hidden');
+            nextBtn.classList.remove('hidden');
+
+            questionNum++;
+        }
+
+        function nextQuestion() {
+            if (questionNum >= maxQuestions) {
+                showGameOver();
+            } else {
+                questionNumEl.textContent = questionNum + 1;
+                loadQuestion();
+            }
+        }
+
+        function getResultCategory(score) {
+            if (score === 10) return '10';
+            if (score >= 7) return '7-9';
+            if (score >= 4) return '4-6';
+            return '0-3';
+        }
+
+        function showGameOver() {
+            gameContentEl.classList.add('hidden');
+            gameOverEl.classList.remove('hidden');
+
+            // Utiliser la fonction partagée
+            displayGameResults(score, 'rugby', {
+                resultImg: document.getElementById('result-img'),
+                resultMsg: document.getElementById('result-msg'),
+                finalScore: document.getElementById('final-score'),
+                accuracy: document.getElementById('accuracy')
+            }, maxQuestions);
+        }
+
+        function restartGame() {
+            score = 0;
+            questionNum = 0;
+
+            scoreEl.textContent = score;
+            questionNumEl.textContent = 1;
+
+            gameContentEl.classList.remove('hidden');
+            gameOverEl.classList.add('hidden');
+
+            loadQuestion();
+        }
+
+        nextBtn.onclick = nextQuestion;
+
+        loadQuestion();
+    </script>
+</body>
+</html>
