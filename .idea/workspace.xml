@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a30988d3-886b-4399-9a41-80385973ec68" name="Changes" comment="" />
+    <list default="true" id="a30988d3-886b-4399-9a41-80385973ec68" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/static/manifest.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/service-worker-advanced.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/service-worker.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/menu.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/menu.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -40,7 +47,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "fix-esthetic-and-charge-all-at-beginning",
     "last_opened_file_path": "/Users/constant.dassonville/perso/lea-christmas-game/static",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
