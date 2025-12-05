@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Geography Games</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .menu-container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .game-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .game-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .game-description {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .coming-soon {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .coming-soon:hover {
+            transform: none;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #fbbf24;
+            color: #78350f;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+                        url('/static/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container">
+        <div class="header">
+            <h1>🎮❤️ Jeu de Léa&Constant ❤️🎮</h1>
+            <p>On va voir qui est le meilleur !</p>
+        </div>
+
+        <div class="games-grid">
+            <a href="/flag-game/" class="game-card">
+                <div class="game-icon">🌍</div>
+                <div class="game-title">Géographie</div>
+                <div class="game-description">
+                    Compare les pays par population, surface, GDP, et densité. Vas tu être capable de choisir la plus grande valeurs 10 fois de suite ?
+                </div>
+            </a>
+
+            <div class="game-card coming-soon">
+                <div class="game-icon">🗺️</div>
+                <div class="game-title">Capital Quiz</div>
+                <div class="game-description">
+                    Guess the capital cities of countries around the world.
+                </div>
+                <span class="badge">Coming Soon</span>
+            </div>
+
+            <div class="game-card coming-soon">
+                <div class="game-icon">📍</div>
+                <div class="game-title">Map Challenge</div>
+                <div class="game-description">
+                    Locate countries on the world map as fast as you can!
+                </div>
+                <span class="badge">Coming Soon</span>
+            </div>
+
+            <div class="game-card coming-soon">
+                <div class="game-icon">🏆</div>
+                <div class="game-title">Geography Trivia</div>
+                <div class="game-description">
+                    Answer random geography questions and become a master!
+                </div>
+                <span class="badge">Coming Soon</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
