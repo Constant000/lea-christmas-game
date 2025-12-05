@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌍 Flag Comparison Game</title>
+    <script src="/static/game_results.js"></script>
     <style>
         * {
             margin: 0;
@@ -15,24 +16,54 @@
             font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
         }
 
         .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
             max-width: 900px;
-            margin: 0 auto;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #666;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: #444;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .header {
             text-align: center;
-            color: white;
             margin-bottom: 30px;
+            margin-top: 20px;
         }
 
         .header h1 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            color: #667eea;
         }
 
         .stats {
@@ -41,13 +72,11 @@
             gap: 40px;
             font-size: 1.3rem;
             font-weight: bold;
+            color: #333;
         }
 
-        .game-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        .stats span {
+            color: #667eea;
         }
 
         .question {
@@ -122,6 +151,11 @@
             color: #333;
         }
 
+        .option-card.correct .country-value.revealed,
+        .option-card.wrong .country-value.revealed {
+            color: white;
+        }
+
         .result {
             text-align: center;
             margin-top: 20px;
@@ -166,7 +200,7 @@
         .game-over h2 {
             font-size: 2.5rem;
             color: #333;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .final-stats {
@@ -182,46 +216,62 @@
         .hidden {
             display: none;
         }
+
+        .result-image {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin: 20px auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: block;
+        }
+
+        .game-over .result-message {
+            font-size: 1.3rem;
+            color: #666;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <a href="/" class="back-btn">← Menu</a>
+
         <div class="header">
-            <h1>🌍 Flag Comparison Game</h1>
+            <h1>🌍 Jeu du drapeau 🇨🇱</h1>
             <div class="stats">
                 <span>Score: <span id="score">0</span></span>
-                <span>Streak: <span id="streak">0</span> 🔥</span>
                 <span>Question: <span id="question-num">1</span>/10</span>
             </div>
         </div>
 
-        <a href="/" style="position: absolute; top: 20px; left: 20px; color: white; text-decoration: none; font-size: 1.5rem; background: rgba(0,0,0,0.2); padding: 10px 20px; border-radius: 10px;">← Back to Menu</a>
-
-        <div class="game-card">
-            <div id="game-content">
-                <div class="question" id="question-text">
-                    Which country has the highest population?
-                </div>
-
-                <div class="options" id="options-container">
-                    <!-- Options will be inserted here -->
-                </div>
-
-                <div id="result" class="result hidden">
-                    <div id="result-message" class="result-message"></div>
-                    <button class="next-btn" onclick="nextQuestion()">Next Question →</button>
-                </div>
+        <div id="game-content">
+            <div class="question" id="question-text">
+                Which country has the highest population?
             </div>
 
-            <div id="game-over" class="game-over hidden">
-                <h2>🎮 Game Over! 🎮</h2>
-                <div class="final-stats">
-                    <p class="final-score">Final Score: <span id="final-score">0</span></p>
-                    <p>Best Streak: <span id="best-streak">0</span> 🔥</p>
-                    <p>Accuracy: <span id="accuracy">0</span>%</p>
-                </div>
-                <button class="next-btn" onclick="restartGame()">Play Again</button>
+            <div class="options" id="options-container">
+                <!-- Options will be inserted here -->
             </div>
+
+            <div id="result" class="result hidden">
+                <div id="result-message" class="result-message"></div>
+                <button class="next-btn" onclick="nextQuestion()">Next Question →</button>
+            </div>
+        </div>
+
+        <div id="game-over" class="game-over hidden">
+            <h2>🎮 Game Over! 🎮</h2>
+            <img id="result-img" class="result-image" src="" alt="Résultat">
+            <p id="result-msg" class="result-message"></p>
+            <div class="final-stats">
+                <p class="final-score">Final Score: <span id="final-score">0</span> / 10</p>
+                <p>Best Streak: <span id="best-streak">0</span> 🔥</p>
+                <p>Accuracy: <span id="accuracy">0</span>%</p>
+            </div>
+            <button class="next-btn" onclick="restartGame()">Play Again</button>
         </div>
     </div>
 
@@ -238,7 +288,7 @@
             if (metric === 'population') {
                 return num.toLocaleString();
             } else if (metric === 'area') {
-                return num.toLocaleString() + ' km²';
+                return num.toLocaleString() + ' terrains de rugby';
             } else if (metric === 'gdp') {
                 // GDP is already in millions in the CSV
                 if (num >= 1000000) {
@@ -256,7 +306,7 @@
 
         async function loadQuestion() {
             try {
-                const response = await fetch('/flag-game/api/question');  // Add /flag-game prefix
+                const response = await fetch('/flag-game/api/question');
                 const data = await response.json();
 
                 if (data.error) {
@@ -329,7 +379,6 @@
 
             // Update display
             document.getElementById('score').textContent = score;
-            document.getElementById('streak').textContent = streak;
 
             // Show result
             const resultDiv = document.getElementById('result');
@@ -337,10 +386,10 @@
             resultDiv.classList.remove('hidden');
 
             if (isCorrect) {
-                resultMessage.textContent = '✅ Correct! Well done!';
+                resultMessage.textContent = '✅ Tu es la best! bravo!';
                 resultMessage.className = 'result-message correct';
             } else {
-                resultMessage.textContent = `❌ Wrong! It was ${currentCorrectAnswer}`;
+                resultMessage.textContent = `❌ Faux! C'était ${currentCorrectAnswer} `;
                 resultMessage.className = 'result-message wrong';
             }
 
@@ -360,18 +409,27 @@
             document.getElementById('game-content').classList.add('hidden');
             document.getElementById('game-over').classList.remove('hidden');
 
-            document.getElementById('final-score').textContent = score;
-            document.getElementById('best-streak').textContent = bestStreak;
-            document.getElementById('accuracy').textContent = ((score / (maxQuestions * 10)) * 100).toFixed(1);
+            // Convertir le score en score sur 10
+            const scoreOutOf10 = score / 10;
+
+            // Utiliser la fonction partagée
+            displayGameResults(scoreOutOf10, 'geography', {
+                resultImg: document.getElementById('result-img'),
+                resultMsg: document.getElementById('result-msg'),
+                finalScore: document.getElementById('final-score'),
+                accuracy: document.getElementById('accuracy'),
+                bestStreak: document.getElementById('best-streak'),
+                bestStreakValue: bestStreak
+            }, maxQuestions);
         }
 
         function restartGame() {
             score = 0;
             streak = 0;
+            bestStreak = 0;
             questionNum = 0;
 
             document.getElementById('score').textContent = score;
-            document.getElementById('streak').textContent = streak;
             document.getElementById('question-num').textContent = 1;
 
             document.getElementById('game-content').classList.remove('hidden');

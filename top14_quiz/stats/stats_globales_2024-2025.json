@@ -1,0 +1,190 @@
+{
+  "saison": "2024-2025",
+  "statistiques": {
+    "matches": {
+      "total": 188,
+      "victoires_domicile": {
+        "pourcentage": 74,
+        "nombre": 139
+      },
+      "victoires_exterieur": {
+        "pourcentage": 22,
+        "nombre": 41
+      },
+      "nuls": {
+        "pourcentage": 4,
+        "nombre": 8
+      }
+    },
+    "points": {
+      "total": 9602,
+      "moyenne_par_match": 51.1
+    },
+    "essais": {
+      "total": 1100,
+      "moyenne_par_match": 5.9
+    }
+  },
+  "matches": {
+    "total": 188,
+    "victoires_domicile": {
+      "pourcentage": 74,
+      "nombre": 139
+    },
+    "victoires_exterieur": {
+      "pourcentage": 22,
+      "nombre": 41
+    },
+    "nuls": {
+      "pourcentage": 4,
+      "nombre": 8
+    }
+  },
+  "points": {
+    "total": 9602,
+    "moyenne_par_match": 51.1
+  },
+  "essais": {
+    "total": 1100,
+    "moyenne_par_match": 5.9
+  },
+  "plaquages": {
+    "total": 46593,
+    "moyenne_par_match": 247.8
+  },
+  "offloads": {
+    "total": 3047,
+    "moyenne_par_match": 16.2
+  },
+  "cartons": {
+    "total": 355,
+    "moyenne_par_match": 1.9,
+    "jaunes": 336,
+    "orange": 0,
+    "rouges": 19
+  },
+  "meilleurs_joueurs": {
+    "meilleur_realisateur": [
+      {
+        "rang": 1,
+        "nom": "Joe SIMMONDS",
+        "nom_court": "J. SIMMONDS",
+        "club": "Section Paloise",
+        "points": 255
+      },
+      {
+        "rang": 2,
+        "nom": "Maxime LAFAGE",
+        "nom_court": "M. LAFAGE",
+        "club": "RC Vannes",
+        "points": 253
+      },
+      {
+        "rang": 3,
+        "nom": "Nolann LE GARREC",
+        "nom_court": "N. LE GARREC",
+        "club": "Racing 92",
+        "points": 228
+      }
+    ],
+    "meilleur_marqueur_essais": [
+      {
+        "rang": 1,
+        "nom": "Louis BIELLE-BIARREY",
+        "nom_court": "L. BIELLE-BIARREY",
+        "club": "Union Bordeaux-Bègles",
+        "essais": 13
+      },
+      {
+        "rang": 2,
+        "nom": "Gaël DREAN",
+        "nom_court": "G. DREAN",
+        "club": "RC Toulon",
+        "essais": 12
+      },
+      {
+        "rang": 3,
+        "nom": "Sireli MAQALA",
+        "nom_court": "S. MAQALA",
+        "club": "Aviron Bayonnais",
+        "essais": 11
+      }
+    ],
+    "meilleur_gratteur": [
+      {
+        "rang": 1,
+        "nom": "Jack WILLIS",
+        "nom_court": "J. WILLIS",
+        "club": "Stade Toulousain",
+        "ballons_grattes": 28
+      },
+      {
+        "rang": 2,
+        "nom": "Sekou MACALOU",
+        "nom_court": "S. MACALOU",
+        "club": "Stade Français Paris",
+        "ballons_grattes": 16
+      },
+      {
+        "rang": 3,
+        "nom": "Viliami VUNIPOLA",
+        "nom_court": "V. VUNIPOLA",
+        "club": "Montpellier Hérault Rugby",
+        "ballons_grattes": 15
+      }
+    ]
+  },
+  "statistiques_clubs": {
+    "meilleure_attaque": [
+      {
+        "rang": 1,
+        "club": "Stade Toulousain",
+        "points_marques": 891
+      },
+      {
+        "rang": 2,
+        "club": "Union Bordeaux-Bègles",
+        "points_marques": 762
+      },
+      {
+        "rang": 3,
+        "club": "Racing 92",
+        "points_marques": 710
+      }
+    ],
+    "meilleur_temps_possession": [
+      {
+        "rang": 1,
+        "club": "Stade Toulousain",
+        "pourcentage": 55.2
+      },
+      {
+        "rang": 2,
+        "club": "ASM Clermont",
+        "pourcentage": 52.4
+      },
+      {
+        "rang": 3,
+        "club": "Stade Rochelais",
+        "pourcentage": 52.2
+      }
+    ],
+    "meilleure_defense": [
+      {
+        "rang": 1,
+        "club": "Montpellier Hérault Rugby",
+        "points_encaisses": 64
+      },
+      {
+        "rang": 2,
+        "club": "Stade Rochelais",
+        "points_encaisses": 65
+      },
+      {
+        "rang": 3,
+        "club": "USA Perpignan",
+        "points_encaisses": 72
+      }
+    ]
+  }
+}

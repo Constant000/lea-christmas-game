@@ -13,7 +13,12 @@
 
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+                        url('/static/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -22,7 +27,7 @@
         }
 
         .menu-container {
-            max-width: 800px;
+            max-width: 1200px;
             width: 100%;
         }
 
@@ -60,11 +65,23 @@
             text-decoration: none;
             color: inherit;
             display: block;
+            position: relative;
+            overflow: hidden;
         }
 
         .game-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .game-card.rugby {
+            background: linear-gradient(135deg, #c8102e 0%, #000000 100%);
+            color: white;
+        }
+
+        .game-card.rugby .game-title,
+        .game-card.rugby .game-description {
+            color: white;
         }
 
         .game-icon {
@@ -105,19 +122,9 @@
             margin-top: 10px;
         }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-                        url('/static/background.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+        .badge.new {
+            background: #10b981;
+            color: white;
         }
     </style>
 </head>
@@ -133,36 +140,25 @@
                 <div class="game-icon">🌍</div>
                 <div class="game-title">Géographie</div>
                 <div class="game-description">
-                    Compare les pays par population, surface, GDP, et densité. Vas tu être capable de choisir la plus grande valeurs 10 fois de suite ?
+                    Compare les pays par population, surface, GDP, et densité. Vas tu être capable de choisir la plus grande valeur 10 fois de suite ?
                 </div>
             </a>
 
-            <div class="game-card coming-soon">
-                <div class="game-icon">🗺️</div>
-                <div class="game-title">Capital Quiz</div>
+            <a href="/toulouse/" class="game-card rugby">
+                <div class="game-icon">🏉</div>
+                <div class="game-title">Stade Toulousain</div>
                 <div class="game-description">
-                    Guess the capital cities of countries around the world.
+                    Devine le nom et le poste des joueurs du Stade Toulousain ! Sauras-tu reconnaître tous les champions ?
                 </div>
-                <span class="badge">Coming Soon</span>
-            </div>
+            </a>
 
-            <div class="game-card coming-soon">
-                <div class="game-icon">📍</div>
-                <div class="game-title">Map Challenge</div>
+            <a href="/top14-quiz/" class="game-card">
+                <div class="game-icon">📊</div>
+                <div class="game-title">Quiz Top 14</div>
                 <div class="game-description">
-                    Locate countries on the world map as fast as you can!
+                    Teste tes connaissances sur la saison 2024-2025 du Top 14 !
                 </div>
-                <span class="badge">Coming Soon</span>
-            </div>
-
-            <div class="game-card coming-soon">
-                <div class="game-icon">🏆</div>
-                <div class="game-title">Geography Trivia</div>
-                <div class="game-description">
-                    Answer random geography questions and become a master!
-                </div>
-                <span class="badge">Coming Soon</span>
-            </div>
+            </a>
         </div>
     </div>
 </body>
