@@ -450,6 +450,49 @@
             color: white;
         }
 
+        /* ===== PI GAME STYLES ===== */
+        #pi-game-page {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        #pi-game-page .game-header h1 {
+            color: #667eea;
+        }
+
+        .pi-display #pi-next {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        #pi-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        #pi-options .option-btn {
+            padding: 30px;
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        #pi-player-name {
+            padding: 12px;
+            font-size: 1.1rem;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 300px;
+            margin: 15px auto;
+            display: block;
+        }
+
         /* ===== COMMON RESULT STYLES ===== */
         .result {
             text-align: center;
@@ -726,6 +769,45 @@
             color: #666;
             min-height: 1.5rem; /* Hauteur minimale pour la valeur */
         }
+
+        next-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            background: #667eea; /* Couleur par défaut */
+        }
+
+        .next-btn:hover {
+            background: #5568d3; /* Plus foncé au survol */
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .next-btn:active {
+            background: #4557c2; /* Encore plus foncé au clic */
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Pour le jeu de Pi spécifiquement */
+        #pi-game-page .next-btn {
+            background: #667eea;
+        }
+
+        #pi-game-page .next-btn:hover {
+            background: #5568d3;
+        }
+
+        #pi-game-page .next-btn:active {
+            background: #4557c2;
+        }
     </style>
 </head>
 <body>
@@ -774,7 +856,14 @@
                         <div class="game-description">
                             Mode compétitif avec classement !
                         </div>
-</div>
+                    </div>
+                    <div class="game-card" onclick="navigateTo('pi-game')">
+                        <div class="game-icon">🥧</div>
+                        <div class="game-title">Jeu de Pi</div>
+                        <div class="game-description">
+                            Trouve les décimales de Pi ! Mode classé.
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -915,6 +1004,53 @@
                     <p>Précision: <span id="quiz-accuracy">0</span>%</p>
                 </div>
                 <button class="next-btn" onclick="quizGame.restart()">Rejouer</button>
+            </div>
+        </div>
+    </div>
+
+        <!-- ===== PI GAME PAGE ===== -->
+    <div id="pi-game-page" class="page game-page">
+        <div class="game-container">
+            <button class="back-btn" onclick="navigateTo('menu')">← Menu</button>
+
+            <div class="game-header">
+                <h1>🥧 Jeu de Pi</h1>
+                <p class="subtitle">Trouve la prochaine décimale !</p>
+            </div>
+
+            <div id="pi-game-content">
+                <div class="stats" style="display: flex; justify-content: space-around; margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                    <div class="stat" style="text-align: center;">
+                        <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">Position</div>
+                        <div style="font-size: 1.8rem; font-weight: bold; color: #667eea;" id="pi-position">0</div>
+                    </div>
+                    <div class="pi-display" style="background: #f0f0f0; padding: 20px; border-radius: 10px; margin-bottom: 30px; text-align: center; font-size: 1.5rem; font-family: 'Courier New', monospace; letter-spacing: 2px; word-break: break-all;">
+                        <span style="color: #999;" id="pi-previous-digits"></span><span style="color: #667eea; font-weight: bold;">?</span>
+                    </div>
+                </div>
+
+                <p class="question-text" style="text-align: center; font-size: 1.3rem; margin-bottom: 20px; color: #333;">Quelle est la prochaine décimale ?</p>
+
+                <div class="options" id="pi-options"></div>
+
+                <div id="pi-result" class="result hidden"></div>
+            </div>
+
+            <div id="pi-game-over" class="game-over hidden">
+                <h2>🎮 Game Over!</h2>
+
+                <div class="final-stats">
+                    <p>🎯 Position atteinte: <strong id="pi-final-position">0</strong> / 1000</p>
+                </div>
+
+                <div id="pi-submit-section">
+                    <input type="text" id="pi-player-name" placeholder="Entre ton nom" maxlength="20" style="padding: 12px; font-size: 1.1rem; border: 2px solid #667eea; border-radius: 8px; width: 100%; max-width: 300px; margin: 15px auto; display: block;">
+                    <button class="next-btn" onclick="piGame.submitScore()">Enregistrer mon score</button>
+                </div>
+
+                <div id="pi-leaderboard" class="hidden"></div>
+
+                <button class="next-btn" onclick="piGame.restart()">Rejouer</button>
             </div>
         </div>
     </div>

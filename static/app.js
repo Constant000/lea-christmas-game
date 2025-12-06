@@ -45,7 +45,8 @@ function navigateTo(page) {
         'menu': 'menu-page',
         'flag-game': 'flag-game-page',
         'toulouse-game': 'toulouse-game-page',
-        'top14-quiz': 'top14-quiz-page'
+        'top14-quiz': 'top14-quiz-page',
+        'pi-game': 'pi-game-page'  // ADD THIS
     };
 
     const pageId = pageMap[page];
@@ -60,6 +61,8 @@ function navigateTo(page) {
             toulouseGame.init();
         } else if (page === 'top14-quiz' && !quizGame.initialized) {
             quizGame.init();
+        } else if (page === 'pi-game' && !piGame.initialized) {  // ADD THIS
+            piGame.init();
         }
     }
 }
@@ -481,17 +484,20 @@ const toulouseGame = {
         const nameSection = document.getElementById('toulouse-name-section');
 
         if (this.currentQuestion.offline_mode) {
+            // Hide image (not available offline)
             playerImageDiv.style.display = 'none';
-            nameSection.style.display = 'block';
 
-            // Show player name in offline mode
+            // Show player name (not clickable, just display)
+            nameSection.style.display = 'block';
             const nameOptions = document.getElementById('toulouse-name-options');
             nameOptions.innerHTML = `
-                <div style="text-align: center; padding: 20px; background: #f0f0f0; border-radius: 10px; margin-bottom: 20px;">
-                    <h3 style="color: #c8102e; font-size: 1.5rem; margin: 0;">
+                <div style="text-align: center; padding: 25px; background: linear-gradient(135deg, #c8102e 0%, #000000 100%); border-radius: 15px; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                    <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 1px;">Joueur</p>
+                    <h2 style="color: white; font-size: 2rem; margin: 0; font-weight: bold;">
                         ${this.currentQuestion.player.name}
-                    </h3>
+                    </h2>
                 </div>
+                <h3 style="color: #c8102e; margin-bottom: 15px; font-size: 1.3em;">Quel est son poste ?</h3>
             `;
         } else {
             playerImageDiv.style.display = 'block';
@@ -808,6 +814,186 @@ const quizGame = {
             finalScore: document.getElementById('quiz-final-score'),
             accuracy: document.getElementById('quiz-accuracy')
         }, this.maxQuestions);
+    }
+};
+
+
+// ===== PI GAME =====
+const piGame = {
+    initialized: false,
+    currentPosition: 0,
+    currentQuestion: null,
+
+    async init() {
+        this.initialized = true;
+        this.restart();
+    },
+
+    restart() {
+        this.currentPosition = 0;
+
+        document.getElementById('pi-game-content').classList.remove('hidden');
+        document.getElementById('pi-game-over').classList.add('hidden');
+
+        this.loadQuestion();
+    },
+
+    async loadQuestion() {
+        try {
+            const response = await fetch(`/pi-game/api/question?position=${this.currentPosition}`);
+            const data = await response.json();
+
+            this.currentQuestion = data;
+
+            // Vérifications avec logs
+            const positionEl = document.getElementById('pi-position');
+            const previousEl = document.getElementById('pi-previous-digits');
+            const optionsEl = document.getElementById('pi-options');
+            const resultEl = document.getElementById('pi-result');
+
+            console.log('Elements found:', {
+                position: !!positionEl,
+                previous: !!previousEl,
+                options: !!optionsEl,
+                result: !!resultEl
+            });
+
+            if (!positionEl || !previousEl || !optionsEl || !resultEl) {
+                console.error('Missing elements!');
+                return;
+            }
+
+            positionEl.textContent = this.currentPosition;
+            previousEl.textContent = data.previous_digits;
+
+            optionsEl.innerHTML = '';
+
+            data.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option;
+                btn.onclick = () => this.checkAnswer(option, btn);
+                optionsEl.appendChild(btn);
+            });
+
+            resultEl.classList.add('hidden');
+
+        } catch (error) {
+            console.error('Error loading question:', error);
+        }
+    },
+
+    checkAnswer(selected, btn) {
+        const isCorrect = selected === this.currentQuestion.correct;
+
+        // Disable all buttons
+        document.querySelectorAll('#pi-options .option-btn').forEach(b => {
+            b.disabled = true;
+            if (parseInt(b.textContent) === this.currentQuestion.correct) {
+                b.classList.add('correct');
+            } else if (b === btn && !isCorrect) {
+                b.classList.add('wrong');
+            }
+        });
+
+        const resultDiv = document.getElementById('pi-result');
+        resultDiv.classList.remove('hidden');
+
+        if (isCorrect) {
+            resultDiv.textContent = '✅ Correct !';
+            resultDiv.className = 'result correct';
+
+            this.currentPosition++;
+
+            if (this.currentPosition >= 1000) {
+                // Won the game!
+                setTimeout(() => this.gameOver(), 1500);
+            } else {
+                setTimeout(() => this.loadQuestion(), 1500);
+            }
+        } else {
+            resultDiv.textContent = `❌ Faux ! C'était ${this.currentQuestion.correct}`;
+            resultDiv.className = 'result wrong';
+
+            setTimeout(() => this.gameOver(), 2000);
+        }
+    },
+
+    gameOver() {
+        clearInterval(this.timerInterval);
+
+        const finalTime = ((Date.now() - this.startTime) / 1000).toFixed(1);
+
+        document.getElementById('pi-game-content').classList.add('hidden');
+        document.getElementById('pi-game-over').classList.remove('hidden');
+
+        document.getElementById('pi-final-position').textContent = this.currentPosition;
+    },
+
+    async submitScore() {
+        const name = document.getElementById('pi-player-name').value.trim();
+        if (!name) {
+            alert('Entre ton nom !');
+            return;
+        }
+
+        try {
+            const response = await fetch('/pi-game/api/submit-score', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: name,
+                    position: this.currentPosition,
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert(`🎉 Score enregistré ! Tu es ${data.rank}/${data.total}`);
+                document.getElementById('pi-submit-section').classList.add('hidden');
+                this.showLeaderboard();
+            }
+        } catch (error) {
+            console.error('Error submitting score:', error);
+            alert('Erreur lors de l\'enregistrement du score');
+        }
+    },
+
+    async showLeaderboard() {
+        try {
+            const response = await fetch('/pi-game/api/leaderboard');
+            const data = await response.json();
+
+            const leaderboardDiv = document.getElementById('pi-leaderboard');
+            leaderboardDiv.innerHTML = '<h3>🏆 Classement</h3>';
+
+            const table = document.createElement('table');
+            table.className = 'leaderboard-table';
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Rang</th>
+                        <th>Nom</th>
+                        <th>Position</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.leaderboard.map((entry, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${entry.name}</td>
+                            <td>${entry.position}/1000</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+
+            leaderboardDiv.appendChild(table);
+            leaderboardDiv.classList.remove('hidden');
+        } catch (error) {
+            console.error('Error loading leaderboard:', error);
+        }
     }
 };
 

@@ -14,7 +14,9 @@ app = Flask(__name__)
 from flag_game.game import flag_game_bp
 from toulouse_game.game import toulouse_game_bp
 from top14_quiz.game import top14_quiz_bp
+from pi_game.game import pi_game_bp
 
+app.register_blueprint(pi_game_bp, url_prefix='/pi-game')
 app.register_blueprint(flag_game_bp, url_prefix='/flag-game')
 app.register_blueprint(toulouse_game_bp, url_prefix='/toulouse-game')
 app.register_blueprint(top14_quiz_bp, url_prefix='/top14-quiz')
