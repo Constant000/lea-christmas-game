@@ -73,7 +73,7 @@ self.addEventListener('fetch', (event) => {
               request.url.includes('.css') ||
               request.url.includes('.js') ||
               request.url.includes('/flag-game/') ||
-              request.url.includes('/toulouse/') ||
+              request.url.includes('/toulouse-game/') ||
               request.url.includes('/top14-quiz/')
             ) {
               caches.open(DYNAMIC_CACHE)

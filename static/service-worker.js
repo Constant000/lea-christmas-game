@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const CACHE_NAME = `lea-constant-games-${CACHE_VERSION}`;
 
 // Liste complète des fichiers à pré-cacher
@@ -11,7 +11,7 @@ const PRECACHE_URLS = [
     '/static/background.png',
     '/static/results/0-1-2.png',
     '/static/results/3-4.png',
-    '/static/results/7-8.png',
+    '/static/results/5-6.png',
     '/static/results/7-8.png',
     '/static/results/9-10.png',
 ];

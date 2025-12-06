@@ -8,7 +8,7 @@ const RESULT_DATA = {
         image: '/static/results/0-1-2.png',
         messages: {
             rugby: '😅 Aïe aïe aïe... Tu devrais peut-être regarder plus de matchs ! Petite douche froide pour ma loute',
-            geography: ' Tu feras jamais un si mauvais score en géographie je pense mais si tu vois ce message je  t\'aime quand même '
+            geography: 'Je ne pense pas que tu auras jamais une si mauvaise note en géographie, mais si tu vois ce message, sache que je t\'aime toujours.'
         }
     },
     '3-4': {

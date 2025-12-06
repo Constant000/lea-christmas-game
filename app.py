@@ -16,11 +16,11 @@ from toulouse_game.game import toulouse_game_bp
 from top14_quiz.game import top14_quiz_bp
 
 app.register_blueprint(flag_game_bp, url_prefix='/flag-game')
-app.register_blueprint(toulouse_game_bp, url_prefix='/toulouse')
+app.register_blueprint(toulouse_game_bp, url_prefix='/toulouse-game')
 app.register_blueprint(top14_quiz_bp, url_prefix='/top14-quiz')
 
 # Chemin vers les images de résultats
-RESULTS_FOLDER = Path(__file__).parent / "rugby_game" / "results_png"
+RESULTS_FOLDER = Path(__file__).parent / "static" / "results"
 
 
 @app.route('/')
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     print("📱 Open http://127.0.0.1:5000 in your browser")
     print("\n🎯 Available Games:")
     print("   🌍 Flag Game: http://127.0.0.1:5000/flag-game/")
-    print("   🏉 Stade Toulousain: http://127.0.0.1:5000/toulouse/")
+    print("   🏉 Stade Toulousain: http://127.0.0.1:5000/toulouse-game/")
     print("   📊 Top 14 Quiz: http://127.0.0.1:5000/top14-quiz/")
     print("=" * 50 + "\n")
 
