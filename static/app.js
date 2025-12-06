@@ -360,23 +360,33 @@ const flagGame = {
 
         const timeInSeconds = ((this.endTime - this.startTime) / 1000);
 
+        console.log('📤 Submitting score:', {
+            name: name,
+            score: this.score / 10,
+            time: timeInSeconds
+        });
+
         try {
             const response = await fetch('/flag-game/api/submit-score', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name: name,
-                    score: this.score / 10,
+                    score: this.score / 10,  // Score sur 10
                     time: timeInSeconds
                 })
             });
 
+            console.log('📥 Response status:', response.status);
             const data = await response.json();
+            console.log('📥 Response data:', data);
 
             if (data.success) {
                 alert(`🎉 Score enregistré ! Tu es ${data.rank}/${data.total}`);
                 document.getElementById('flag-leaderboard-submit').classList.add('hidden');
                 this.showLeaderboard();
+            } else {
+                alert('Erreur: ' + (data.error || 'Erreur inconnue'));
             }
         } catch (error) {
             console.error('Error submitting score:', error);
