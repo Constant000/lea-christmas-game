@@ -1,130 +1,141 @@
-const CACHE_NAME = 'lea-constant-games-v3'; // Nouvelle version
+const CACHE_VERSION = 'v4';
+const CACHE_NAME = `lea-constant-games-${CACHE_VERSION}`;
 
-// Fichiers à pré-cacher (pages principales)
+// Liste complète des fichiers à pré-cacher
 const PRECACHE_URLS = [
   '/',
   '/flag-game/',
   '/toulouse/',
   '/top14-quiz/',
   '/static/game_results.js',
+  '/static/background.png',
+  '/static/results/0_1_2.png',
+  '/static/results/3_4.png',
+  '/static/results/7_8.png',
+  '/static/results/9_10.png',
 ];
 
-// Installation - Pré-cache tout
+// Installation
 self.addEventListener('install', (event) => {
-  console.log('[ServiceWorker] Installing v3...');
+  console.log('[SW] Installing version', CACHE_VERSION);
 
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('[ServiceWorker] Caching pages...');
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
 
-        // Cache chaque URL individuellement pour voir les erreurs
-        const cachePromises = PRECACHE_URLS.map((url) => {
-          return fetch(url)
-            .then((response) => {
-              if (response.ok) {
-                console.log('[ServiceWorker] ✓ Cached:', url);
-                return cache.put(url, response);
-              } else {
-                console.warn('[ServiceWorker] ✗ Failed to cache:', url, response.status);
-              }
-            })
-            .catch((error) => {
-              console.error('[ServiceWorker] ✗ Error caching:', url, error.message);
-            });
-        });
+      // Cache les URLs une par une
+      for (const url of PRECACHE_URLS) {
+        try {
+          const response = await fetch(url);
+          if (response.ok) {
+            await cache.put(url, response);
+            console.log('[SW] ✓ Cached:', url);
+          } else {
+            console.warn('[SW] ✗ Failed:', url, response.status);
+          }
+        } catch (error) {
+          console.error('[SW] ✗ Error:', url, error.message);
+        }
+      }
 
-        return Promise.all(cachePromises);
-      })
-      .then(() => {
-        console.log('[ServiceWorker] ✓ All pages cached, skipping waiting');
-        return self.skipWaiting();
-      })
+      console.log('[SW] ✓ Pre-cache complete');
+      await self.skipWaiting();
+    })()
   );
 });
 
 // Activation
 self.addEventListener('activate', (event) => {
-  console.log('[ServiceWorker] Activating...');
+  console.log('[SW] Activating version', CACHE_VERSION);
 
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
+    (async () => {
+      // Supprime les anciens caches
+      const cacheNames = await caches.keys();
+      await Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            console.log('[ServiceWorker] Deleting old cache:', cacheName);
+            console.log('[SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
-    }).then(() => {
-      console.log('[ServiceWorker] ✓ Activated and claiming clients');
-      return self.clients.claim();
-    })
+
+      console.log('[SW] ✓ Activated');
+      await self.clients.claim();
+    })()
   );
 });
 
-// Fetch
+// Fetch - Cache First avec fallback intelligent
 self.addEventListener('fetch', (event) => {
   const { request } = event;
+  const url = new URL(request.url);
 
-  // Filtres de sécurité
+  // Filtres
   if (!request.url.startsWith('http')) return;
   if (request.url.includes('chrome-extension')) return;
   if (request.method !== 'GET') return;
-
-  const url = new URL(request.url);
-  if (url.origin !== location.origin) return;
+  if (url.origin !== self.location.origin) return;
 
   event.respondWith(
-    caches.match(request)
-      .then((cachedResponse) => {
-        if (cachedResponse) {
-          console.log('[ServiceWorker] ✓ Serving from cache:', request.url);
-          return cachedResponse;
+    (async () => {
+      // 1. Cherche dans le cache
+      const cachedResponse = await caches.match(request);
+      if (cachedResponse) {
+        console.log('[SW] ✓ Cache:', request.url);
+
+        // Mise à jour en arrière-plan (stale-while-revalidate)
+        event.waitUntil(
+          fetch(request).then((response) => {
+            if (response && response.ok) {
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(request, response);
+              });
+            }
+          }).catch(() => {})
+        );
+
+        return cachedResponse;
+      }
+
+      // 2. Sinon, fetch depuis le réseau
+      try {
+        console.log('[SW] ⟳ Network:', request.url);
+        const response = await fetch(request);
+
+        if (response && response.ok) {
+          const cache = await caches.open(CACHE_NAME);
+          cache.put(request, response.clone());
+          console.log('[SW] ✓ Cached new:', request.url);
         }
 
-        console.log('[ServiceWorker] ⟳ Fetching from network:', request.url);
+        return response;
+      } catch (error) {
+        console.log('[SW] ✗ Network failed:', request.url);
 
-        return fetch(request)
-          .then((response) => {
-            if (!response || response.status !== 200 || response.type === 'error') {
-              return response;
-            }
+        // 3. Fallback intelligent
+        // Pour les pages HTML, retourne la page d'accueil
+        if (request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
+          const homeCache = await caches.match('/');
+          if (homeCache) {
+            console.log('[SW] ⟳ Fallback to home');
+            return homeCache;
+          }
+        }
 
-            const responseToCache = response.clone();
+        // Pour les API, retourne une réponse vide
+        if (request.url.includes('/api/')) {
+          return new Response(
+            JSON.stringify({ error: 'Offline - no cached data' }),
+            { headers: { 'Content-Type': 'application/json' } }
+          );
+        }
 
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(request, responseToCache)
-                  .then(() => console.log('[ServiceWorker] ✓ Cached:', request.url))
-                  .catch((err) => console.warn('[ServiceWorker] ✗ Cache put failed:', err.message));
-              });
-
-            return response;
-          })
-          .catch((error) => {
-            console.log('[ServiceWorker] ✗ Network failed:', request.url);
-
-            // Cherche dans le cache
-            return caches.match(request)
-              .then((cachedResponse) => {
-                if (cachedResponse) {
-                  console.log('[ServiceWorker] ✓ Fallback to cache:', request.url);
-                  return cachedResponse;
-                }
-
-                // Fallback vers la page d'accueil pour les navigations
-                if (request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
-                  console.log('[ServiceWorker] ⟳ Fallback to home page');
-                  return caches.match('/');
-                }
-
-                throw error;
-              });
-          });
-      })
+        throw error;
+      }
+    })()
   );
 });
 
-console.log('[ServiceWorker] Script loaded');
+console.log('[SW] Script loaded, version', CACHE_VERSION);
