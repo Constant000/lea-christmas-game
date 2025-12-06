@@ -33,7 +33,7 @@ const RESULT_DATA = {
         }
     },
     '9-10': {
-        image: '/static/results/9=10.png',
+        image: '/static/results/9-10.png',
         messages: {
             rugby: '🏆 PARFAIT ! Tu es un vrai expert du Stade Toulousain ! Chapeau l\'artiste ! 🎉 Tu es une reine inégalé',
             geography: '🏆 SCORE PARFAIT ! Tu es un véritable génie de la géographie ! 🌍✨ La reine des drapeaux ! '
@@ -44,7 +44,7 @@ const RESULT_DATA = {
 /**
  * Get result category based on score
  * @param {number} score - Score out of 10
- * @returns {string} Category key ('0-3', '4-6', '7-9', or '10')
+ * @returns {string} Category key ('0-2', '3-4', '5-6', '7-8', or '9-10')
  */
 function getResultCategory(score) {
     if (score >= 10) return '9-10';

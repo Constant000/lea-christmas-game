@@ -1,14 +1,12 @@
-const CACHE_VERSION = 'v8';
-const CACHE_NAME = `lea-constant-games-${CACHE_VERSION}`;
+/**
+ * Service Worker for Offline Support
+ * Caches all assets and provides offline functionality
+ */
 
-const PRECACHE_URLS = [
+const CACHE_NAME = 'lea-constant-games-v20';
+const ASSETS_TO_CACHE = [
     '/',
-    '/flag-game/',
-    '/toulouse-game/',
-    '/top14-quiz/',
-    '/flag-game/api/all-countries',
-    '/toulouse-game/api/all-players',
-    '/top14-quiz/api/all-data',
+    '/static/app.js',
     '/static/game_results.js',
     '/static/background.png',
     '/static/results/0-1-2.png',
@@ -16,104 +14,102 @@ const PRECACHE_URLS = [
     '/static/results/5-6.png',
     '/static/results/7-8.png',
     '/static/results/9-10.png',
-    '/manifest.json',
+    '/manifest.json'
 ];
 
-// Installation
+// Install event - cache assets
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing version', CACHE_VERSION);
-
-  event.waitUntil(
-    (async () => {
-      const cache = await caches.open(CACHE_NAME);
-
-      for (const url of PRECACHE_URLS) {
-        try {
-          const response = await fetch(url);
-          if (response.ok) {
-            await cache.put(url, response);
-            console.log('[SW] ✓ Cached:', url);
-          } else {
-            console.warn('[SW] ✗ Failed:', url, response.status);
-          }
-        } catch (error) {
-          console.error('[SW] ✗ Error:', url, error.message);
-        }
-      }
-
-      console.log('[SW] ✓ Pre-cache complete');
-      await self.skipWaiting();
-    })()
-  );
+    console.log('[SW] Installing...');
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then((cache) => {
+                console.log('[SW] Caching assets');
+                return cache.addAll(ASSETS_TO_CACHE);
+            })
+            .then(() => self.skipWaiting())
+            .catch((error) => {
+                console.error('[SW] Install failed:', error);
+            })
+    );
 });
 
-// Activation
+// Activate event - clean old caches
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating version', CACHE_VERSION);
-
-  event.waitUntil(
-    (async () => {
-      const cacheNames = await caches.keys();
-      await Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('[SW] Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-
-      console.log('[SW] ✓ Activated');
-      await self.clients.claim();
-    })()
-  );
+    console.log('[SW] Activating...');
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
+                        console.log('[SW] Deleting old cache:', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        }).then(() => self.clients.claim())
+    );
 });
 
-// Fetch
+// Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
-  const { request } = event;
-  const url = new URL(request.url);
+    // Ignore non-http(s) requests (chrome-extension, etc.)
+    if (!event.request.url.startsWith('http')) {
+        return;
+    }
 
-  // Filtres
-  if (!request.url.startsWith('http')) return;
-  if (request.url.includes('chrome-extension')) return;
-  if (request.method !== 'GET') return;
-  if (url.origin !== self.location.origin) return;
+    event.respondWith(
+        caches.match(event.request)
+            .then((response) => {
+                // Return cached version or fetch from network
+                return response || fetch(event.request)
+                    .then((fetchResponse) => {
+                        // Only cache valid responses
+                        if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type === 'error') {
+                            return fetchResponse;
+                        }
 
-  event.respondWith(
-    (async () => {
-      const cachedResponse = await caches.match(request);
-      if (cachedResponse) {
-        console.log('[SW] ✓ Cache:', request.url);
-        return cachedResponse;
-      }
+                        // Don't cache API calls
+                        if (event.request.url.includes('/api/')) {
+                            return fetchResponse;
+                        }
 
-      try {
-        console.log('[SW] ⟳ Network:', request.url);
-        const response = await fetch(request);
+                        // Clone and cache the response
+                        const responseToCache = fetchResponse.clone();
 
-        if (response && response.ok) {
-          const cache = await caches.open(CACHE_NAME);
-          cache.put(request, response.clone());
-          console.log('[SW] ✓ Cached new:', request.url);
-        }
+                        caches.open(CACHE_NAME).then((cache) => {
+                            cache.put(event.request, responseToCache).catch((error) => {
+                                // Silently ignore cache errors (e.g., from extensions)
+                                console.warn('[SW] Cache put failed:', error.message);
+                            });
+                        });
 
-        return response;
-      } catch (error) {
-        console.log('[SW] ✗ Network failed:', request.url);
+                        return fetchResponse;
+                    })
+                    .catch((error) => {
+                        // Offline fallback - MUST return a Response
+                        console.log('[SW] Fetch failed, using offline fallback:', error);
 
-        if (request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
-          const homeCache = await caches.match('/');
-          if (homeCache) {
-            console.log('[SW] ⟳ Fallback to home');
-            return homeCache;
-          }
-        }
+                        if (event.request.destination === 'image') {
+                            // Return empty response for images
+                            return new Response('', { status: 404, statusText: 'Not Found' });
+                        }
 
-        throw error;
-      }
-    })()
-  );
+                        // For HTML requests, return cached index
+                        if (event.request.headers.get('accept')?.includes('text/html')) {
+                            return caches.match('/').then(cachedResponse => {
+                                return cachedResponse || new Response('Offline', {
+                                    status: 503,
+                                    statusText: 'Service Unavailable'
+                                });
+                            });
+                        }
+
+                        // For everything else, return a generic error response
+                        return new Response('Offline', {
+                            status: 503,
+                            statusText: 'Service Unavailable'
+                        });
+                    });
+            })
+    );
 });
-
-console.log('[SW] Script loaded, version', CACHE_VERSION);
