@@ -238,6 +238,15 @@ QUESTIONS = [
     },
 ]
 
+@top14_quiz_bp.route('/api/all-data')
+def get_all_data():
+    """Get all quiz data for offline mode."""
+    return jsonify({
+        'classement': classement,
+        'buteurs': buteurs,
+        'stats': stats,
+        'playoffs': playoffs
+    })
 
 @top14_quiz_bp.route('/')
 def index():

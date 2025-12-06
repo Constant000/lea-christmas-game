@@ -1,13 +1,14 @@
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v8';
 const CACHE_NAME = `lea-constant-games-${CACHE_VERSION}`;
 
-// Fichiers à pré-cacher
 const PRECACHE_URLS = [
     '/',
     '/flag-game/',
     '/toulouse-game/',
     '/top14-quiz/',
     '/flag-game/api/all-countries',
+    '/toulouse-game/api/all-players',
+    '/top14-quiz/api/all-data',
     '/static/game_results.js',
     '/static/background.png',
     '/static/results/0-1-2.png',

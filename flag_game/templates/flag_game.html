@@ -4,6 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌍 Flag Comparison Game</title>
+    <div id="mode-indicator" style="text-align: center; padding: 5px 15px; background: #fbbf24; color: #78350f; border-radius: 20px; display: none; margin: 10px auto; max-width: 200px; font-size: 0.9rem; font-weight: bold;">
+    📡 Mode hors ligne
+    </div>
+
+    <script>
+        // Afficher l'indicateur si offline
+        function updateModeIndicator() {
+            const indicator = document.getElementById('mode-indicator');
+            if (!navigator.onLine) {
+                indicator.style.display = 'block';
+            } else {
+                indicator.style.display = 'none';
+            }
+        }
+
+        window.addEventListener('online', updateModeIndicator);
+        window.addEventListener('offline', updateModeIndicator);
+        updateModeIndicator();
+    </script>
     <script src="/static/game_results.js"></script>
     <style>
         * {
@@ -444,6 +463,17 @@
             font-size: 1.5em;
             padding: 40px;
         }
+        .country-flag-placeholder {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .country-flag-placeholder {
+                font-size: 3rem;
+                margin-bottom: 8px;
+            }
+}
     </style>
 </head>
 <body>
@@ -497,6 +527,18 @@
         let currentCorrectAnswer = '';
         let currentMetric = '';
         const maxQuestions = 10;
+        let isOffline = !navigator.onLine;
+
+        // Détecter les changements de connexion
+        window.addEventListener('online', () => {
+            isOffline = false;
+            console.log('✓ Mode en ligne');
+        });
+
+        window.addEventListener('offline', () => {
+            isOffline = true;
+            console.log('⚠️ Mode hors ligne - drapeaux désactivés');
+        });
 
         // Charger toutes les données au démarrage
         async function loadAllData() {
@@ -512,7 +554,15 @@
                 loadQuestion();
             } catch (error) {
                 console.error('Error loading data:', error);
-                document.getElementById('loading').textContent = 'Erreur de chargement des données';
+                isOffline = true;
+                document.getElementById('loading').textContent = 'Mode hors ligne - Chargement des données locales...';
+
+                // En mode offline, essayer de charger depuis le cache
+                setTimeout(() => {
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('game-content').classList.remove('hidden');
+                    loadQuestion();
+                }, 1000);
             }
         }
 
@@ -530,17 +580,15 @@
                 return null;
             }
 
-            // Mélange et prend 4 pays
             const shuffled = [...validCountries].sort(() => Math.random() - 0.5);
             const selected = shuffled.slice(0, 4);
 
-            // Trouve le pays avec la plus grande valeur
             const sorted = [...selected].sort((a, b) => b[metric] - a[metric]);
             const correct = sorted[0];
 
             const questionTexts = {
                 'population': 'Allez ma loute, quel pays à la plus grande population ?',
-                'area': 'Quel pays a la plus grande superficie ?',
+                'area': 'Quel pays a la plus grande superficie (en terrains de rugby) ?',
                 'gdp': 'Quel pays a le plus grand PIB ? (pas par habitant hein)',
                 'density': 'Quel pays a la plus grande densité de population ?'
             };
@@ -561,7 +609,6 @@
             if (metric === 'population') {
                 return num.toLocaleString();
             } else if (metric === 'area') {
-                // Convertir km² en terrains de rugby
                 const rugbyFields = Math.round((num * 1000000) / 10000);
                 return rugbyFields.toLocaleString() + ' terrains de rugby';
             } else if (metric === 'gdp') {
@@ -600,11 +647,24 @@
                     card.className = 'option-card';
                     card.onclick = () => checkAnswer(option.name, card);
 
-                    card.innerHTML = `
-                        <img src="/flag-game/flags/${option.iso2}.png" alt="${option.name}" class="flag-image">
-                        <div class="country-name">${option.name}</div>
-                        <div class="country-value" data-value="${option.value}">???</div>
-                    `;
+                    // Mode offline : pas de drapeaux, juste le texte
+                    if (isOffline) {
+                        card.innerHTML = `
+                            <div class="country-flag-placeholder">🌍</div>
+                            <div class="country-name">${option.name}</div>
+                            <div class="country-value" data-value="${option.value}">???</div>
+                        `;
+                    } else {
+                        card.innerHTML = `
+                            <img src="/flag-game/flags/${option.iso2}.png"
+                                 alt="${option.name}"
+                                 class="flag-image"
+                                 onerror="this.style.display='none'; this.parentElement.querySelector('.country-flag-placeholder').style.display='block';">
+                            <div class="country-flag-placeholder" style="display: none;">🌍</div>
+                            <div class="country-name">${option.name}</div>
+                            <div class="country-value" data-value="${option.value}">???</div>
+                        `;
+                    }
 
                     optionsContainer.appendChild(card);
                 });
