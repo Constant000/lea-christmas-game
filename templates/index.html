@@ -132,7 +132,7 @@
         }
 
         .game-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: lightskyblue;
             border-radius: 15px;
             padding: 25px 20px;
             text-align: center;
@@ -140,6 +140,22 @@
             transition: all 0.3s ease;
             cursor: pointer;
             backdrop-filter: blur(10px);
+        }
+
+        .game-card-ranked {
+            background: gold;
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .game-card-ranked:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
         }
 
         .game-card:hover {
@@ -271,69 +287,6 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
             margin-bottom: 20px;
-        }
-
-        .option-card {
-            border: 3px solid #667eea;
-            border-radius: 15px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
-            text-align: center;
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .option-card:hover:not(.disabled) {
-            background: #f0f0ff;
-            transform: translateY(-5px);
-        }
-
-        .option-card.disabled {
-            cursor: not-allowed;
-        }
-
-        .option-card.correct {
-            background: #10b981;
-            border-color: #10b981;
-            color: white;
-        }
-
-        .option-card.wrong {
-            background: #ef4444;
-            border-color: #ef4444;
-            color: white;
-        }
-
-        .flag-image {
-            width: 100%;
-            max-width: 200px;
-            height: auto;
-            aspect-ratio: 3/2;
-            object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-            margin-bottom: 15px;
-        }
-
-        .country-name {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .country-value {
-            font-size: 1rem;
-            color: #666;
-        }
-
-        .country-value.revealed {
-            font-weight: bold;
-            color: #333;
         }
 
         /* ===== TOULOUSE GAME STYLES ===== */
@@ -829,7 +782,7 @@
                         <div class="offline-indicator-badge" data-tooltip="Mode hors ligne">📡</div>
                         <div class="game-title">Géographie</div>
                         <div class="game-description">
-                            Compare les pays par population, surface, GDP, et densité.
+                            Compare les pays par population, surface, PIB, et densité.
                         </div>
                     </div>
 
@@ -850,16 +803,16 @@
                             Teste tes connaissances sur la saison 2024-2025 !
                         </div>
                     </div>
-                    <div class="game-card" onclick="navigateTo('flag-game'); flagGame.restart(true);">
+                    <div class="game-card-ranked" onclick="navigateTo('flag-game'); flagGame.restart(true);">
                         <div class="game-icon">🏆</div>
                         <div class="game-title">Géographie - Ranked</div>
                         <div class="game-description">
                             Mode compétitif avec classement !
                         </div>
                     </div>
-                    <div class="game-card" onclick="navigateTo('pi-game')">
+                    <div class="game-card-ranked" onclick="navigateTo('pi-game')">
                         <div class="game-icon">🥧</div>
-                        <div class="game-title">Jeu de Pi</div>
+                        <div class="game-title">Jeu de Pi - Ranked</div>
                         <div class="game-description">
                             Trouve les décimales de Pi ! Mode classé.
                         </div>
@@ -926,8 +879,8 @@
             <button class="back-btn" onclick="navigateTo('menu')">← Menu</button>
 
             <div class="game-header">
-                <h1>🏉 Stade Toulousain</h1>
-                <p class="subtitle">Devine le joueur et son poste !</p>
+                <h1>🏉 Qui est ce ? Stade Toulousain</h1>
+                <p class="subtitle"> On va voir les vrais fan des rouges et noirs!</p>
             </div>
 
             <div class="score">
@@ -1014,8 +967,8 @@
             <button class="back-btn" onclick="navigateTo('menu')">← Menu</button>
 
             <div class="game-header">
-                <h1>🥧 Jeu de Pi</h1>
-                <p class="subtitle">Trouve la prochaine décimale !</p>
+                <h1>🥧 Jeu de Pi - Ranked</h1>
+                <p class="subtitle">Il faut vraiment être fou pour apprendre Pi</p>
             </div>
 
             <div id="pi-game-content">

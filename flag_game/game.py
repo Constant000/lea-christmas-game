@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Flag Comparison Game - Web Version
-Compare countries by population, area, GDP, or density
+Compare countries by population, area, PIB, or density
 """
 
 from flask import Blueprint, render_template, jsonify, send_from_directory, request
