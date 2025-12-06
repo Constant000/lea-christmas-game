@@ -4,10 +4,12 @@ Flag Comparison Game - Web Version
 Compare countries by population, area, GDP, or density
 """
 
-from flask import Blueprint, render_template, jsonify, send_from_directory
+from flask import Blueprint, render_template, jsonify, send_from_directory, request
 import random
 import csv
+import json
 from pathlib import Path
+from datetime import datetime
 
 # Create blueprint
 flag_game_bp = Blueprint('flag_game', __name__,
@@ -16,6 +18,71 @@ flag_game_bp = Blueprint('flag_game', __name__,
 
 FLAGS_FOLDER = Path(__file__).parent / "flags"
 countries_data = []
+
+# Add this near the top of your file
+LEADERBOARD_FILE = Path(__file__).parent / "data" / "flag_leaderboard.json"
+LEADERBOARD_FILE.parent.mkdir(exist_ok=True)
+
+
+def load_leaderboard():
+    """Load leaderboard from file."""
+    if LEADERBOARD_FILE.exists():
+        with open(LEADERBOARD_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return []
+
+
+def save_leaderboard(leaderboard):
+    """Save leaderboard to file."""
+    with open(LEADERBOARD_FILE, 'w', encoding='utf-8') as f:
+        json.dump(leaderboard, f, indent=2, ensure_ascii=False)
+
+
+# Add these routes to your blueprint
+@flag_game_bp.route('/api/leaderboard', methods=['GET'])
+def get_leaderboard():
+    """Get top 10 scores."""
+    leaderboard = load_leaderboard()
+    # Sort by score (desc), then by time (asc)
+    leaderboard.sort(key=lambda x: (-x['score'], x['time']))
+    return jsonify({'leaderboard': leaderboard[:10]})
+
+
+@flag_game_bp.route('/api/submit-score', methods=['POST'])
+def submit_score():
+    """Submit a new score."""
+    data = request.json
+
+    # Validate data
+    if not data.get('name') or data.get('score') is None or data.get('time') is None:
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    leaderboard = load_leaderboard()
+
+    # Add new entry
+    entry = {
+        'name': data['name'][:20],  # Limit name length
+        'score': int(data['score']),
+        'time': float(data['time']),
+        'date': datetime.now().isoformat()
+    }
+
+    leaderboard.append(entry)
+
+    # Keep only top 100 to prevent file from growing too large
+    leaderboard.sort(key=lambda x: (-x['score'], x['time']))
+    leaderboard = leaderboard[:100]
+
+    save_leaderboard(leaderboard)
+
+    # Return rank
+    rank = next((i + 1 for i, e in enumerate(leaderboard) if e == entry), None)
+
+    return jsonify({
+        'success': True,
+        'rank': rank,
+        'total': len(leaderboard)
+    })
 
 @flag_game_bp.route('/api/all-countries')
 def get_all_countries():
