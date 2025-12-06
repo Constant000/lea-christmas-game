@@ -3,7 +3,7 @@
  * Caches all assets and provides offline functionality
  */
 
-const CACHE_NAME = 'lea-constant-games-v19';
+const CACHE_NAME = 'lea-constant-games-v20';
 const ASSETS_TO_CACHE = [
     '/',
     '/static/app.js',
@@ -85,16 +85,30 @@ self.addEventListener('fetch', (event) => {
 
                         return fetchResponse;
                     })
-                    .catch(() => {
-                        // Offline fallback
+                    .catch((error) => {
+                        // Offline fallback - MUST return a Response
+                        console.log('[SW] Fetch failed, using offline fallback:', error);
+
                         if (event.request.destination === 'image') {
-                            // Return placeholder for images
-                            return new Response('', { status: 404 });
+                            // Return empty response for images
+                            return new Response('', { status: 404, statusText: 'Not Found' });
                         }
+
                         // For HTML requests, return cached index
                         if (event.request.headers.get('accept')?.includes('text/html')) {
-                            return caches.match('/');
+                            return caches.match('/').then(cachedResponse => {
+                                return cachedResponse || new Response('Offline', {
+                                    status: 503,
+                                    statusText: 'Service Unavailable'
+                                });
+                            });
                         }
+
+                        // For everything else, return a generic error response
+                        return new Response('Offline', {
+                            status: 503,
+                            statusText: 'Service Unavailable'
+                        });
                     });
             })
     );

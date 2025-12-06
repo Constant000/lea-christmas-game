@@ -101,7 +101,7 @@ async function loadAllGameData() {
 
     try {
         // Load quiz data
-        const quizRes = await fetch('/top14-quiz/api/all-data');
+        const quizRes = await fetch('/top14-quiz/api/all-questions');
         if (quizRes.ok) {
             gameData.quizData = await quizRes.json();
             console.log('✓ Loaded quiz data');
@@ -221,7 +221,6 @@ const flagGame = {
                 <img src="https://flagcdn.com/w320/${option.iso2.toLowerCase()}.png" 
                      alt="${option.name}" 
                      class="flag-image"
-                     onerror="this.src='/static/placeholder-flag.png'">
                 <div class="country-name">${option.name}</div>
                 <div class="country-value" data-value="${option.value}">???</div>
             `;
@@ -574,47 +573,78 @@ const quizGame = {
         this.loadQuestion();  // loadQuestion will handle showing/hiding loading
     },
 
+    generateQuestion() {
+        if (!gameData.quizData || !gameData.quizData.questions || gameData.quizData.questions.length === 0) {
+            return null;
+        }
+
+        // Get a random question
+        const randomIndex = Math.floor(Math.random() * gameData.quizData.questions.length);
+        return gameData.quizData.questions[randomIndex];
+    },
+
     async loadQuestion() {
         console.log('📝 Loading quiz question...');
+        console.log('🔍 gameData.quizData:', gameData.quizData);
+        console.log('🔍 Has questions?', gameData.quizData?.questions?.length);
 
-        // Show loading, hide content
         document.getElementById('quiz-loading').classList.remove('hidden');
         document.getElementById('quiz-game-content').classList.add('hidden');
 
-        try {
-            const response = await fetch('/top14-quiz/api/question');
-            const data = await response.json();
+        let data;
 
-            if (!response.ok) throw new Error(data.error || 'Erreur');
+        // Use cached data if available
+        if (gameData.quizData && gameData.quizData.questions && gameData.quizData.questions.length > 0) {
+            console.log('📦 Using cached quiz data');
+            data = this.generateQuestion();
+        } else {
+        console.log('⚠️ No cached data, trying to fetch...');
+        // ... rest of code else {
+            // Fallback: try to fetch if cache is empty
+            try {
+                const response = await fetch('/top14-quiz/api/question');
 
-            this.currentQuestion = data;
-            console.log('✅ Question loaded:', data.question);
+                // Check if response is ok before parsing JSON
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
 
-            document.getElementById('quiz-question').textContent = data.question;
-
-            const optionsContainer = document.getElementById('quiz-options');
-            optionsContainer.innerHTML = '';
-
-            data.options.forEach(option => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.textContent = option;
-                btn.onclick = () => this.checkAnswer(option, btn);
-                optionsContainer.appendChild(btn);
-            });
-
-            document.getElementById('quiz-result').classList.add('hidden');
-            document.getElementById('quiz-next-btn').classList.add('hidden');
-
-            // Hide loading, show content
-            document.getElementById('quiz-loading').classList.add('hidden');
-            document.getElementById('quiz-game-content').classList.remove('hidden');
-
-            console.log('✅ Quiz question displayed');
-        } catch (error) {
-            console.error('❌ Error loading question:', error);
-            document.getElementById('quiz-loading').textContent = 'Erreur: ' + error.message;
+                data = await response.json();
+            } catch (error) {
+                console.error('❌ Error loading question:', error);
+                document.getElementById('quiz-loading').textContent = 'Erreur: Pas de données disponibles. Connectez-vous à internet.';
+                return;
+            }
         }
+
+        if (!data) {
+            document.getElementById('quiz-loading').textContent = 'Erreur: Pas de questions disponibles';
+            return;
+        }
+
+        this.currentQuestion = data;
+        console.log('✅ Question loaded:', data.question);
+
+        document.getElementById('quiz-question').textContent = data.question;
+
+        const optionsContainer = document.getElementById('quiz-options');
+        optionsContainer.innerHTML = '';
+
+        data.options.forEach(option => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = option;
+            btn.onclick = () => this.checkAnswer(option, btn);
+            optionsContainer.appendChild(btn);
+        });
+
+        document.getElementById('quiz-result').classList.add('hidden');
+        document.getElementById('quiz-next-btn').classList.add('hidden');
+
+        document.getElementById('quiz-loading').classList.add('hidden');
+        document.getElementById('quiz-game-content').classList.remove('hidden');
+
+        console.log('✅ Quiz question displayed');
     },
 
     checkAnswer(selected, btn) {

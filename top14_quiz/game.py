@@ -238,6 +238,57 @@ QUESTIONS = [
     },
 ]
 
+@top14_quiz_bp.route('/api/all-questions')
+def get_all_questions():
+    """Generate all possible questions for offline mode."""
+    try:
+        all_questions = []
+
+        # Generate multiple instances of each question type
+        for _ in range(50):  # Generate 50 questions total
+            q_template = random.choice(QUESTIONS)
+            q_data = q_template['generate']()
+
+            # Handle complex question generation
+            if 'buteur' in q_data:
+                buteur = q_data['buteur']
+                question = q_data['question'](buteur)
+                options = q_data['options'](buteur)
+                correct = q_data['correct'](buteur)
+            elif 'finale' in q_data:
+                finale = q_data['finale']
+                question = q_data['question']
+                options = q_data['options'](finale)
+                correct = q_data['correct'](finale)
+            elif 'correct_val' in q_data:
+                val = q_data['correct_val']
+                question = q_data['question']
+                options = q_data['options'](val)
+                correct = q_data['correct'](val)
+            else:
+                question = q_data['question']
+                options = q_data['options'][:]
+                correct = q_data['correct']
+
+            # Shuffle options
+            random.shuffle(options)
+
+            all_questions.append({
+                'question': question,
+                'options': options,
+                'correct': correct
+            })
+
+        return jsonify({
+            'questions': all_questions
+        })
+
+    except Exception as e:
+        print(f"Error generating questions: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': 'Failed to generate questions'}), 500
+
 @top14_quiz_bp.route('/api/all-data')
 def get_all_data():
     """Get all quiz data for offline mode."""
