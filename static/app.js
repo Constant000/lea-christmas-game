@@ -123,17 +123,23 @@ const flagGame = {
     currentCorrectAnswer: '',
     currentMetric: '',
     maxQuestions: 10,
+    startTime: null,  // ADD THIS
+    endTime: null,    // ADD THIS
+    rankedMode: false,
 
     async init() {
         this.initialized = true;
         this.restart();
     },
 
-    restart() {
+    restart(ranked = false) {
         this.score = 0;
         this.streak = 0;
         this.bestStreak = 0;
         this.questionNum = 0;
+        this.rankedMode = ranked;
+        this.startTime = ranked ? Date.now() : null;
+        this.endTime = null;
 
         document.getElementById('flag-score').textContent = this.score;
         document.getElementById('flag-question-num').textContent = 1;
@@ -300,6 +306,23 @@ const flagGame = {
         document.getElementById('flag-game-over').classList.remove('hidden');
 
         const scoreOutOf10 = this.score / 10;
+
+        if (this.rankedMode) {
+            this.endTime = Date.now();
+            const timeInSeconds = ((this.endTime - this.startTime) / 1000).toFixed(1);
+
+            // Show time
+            document.getElementById('flag-time').textContent = timeInSeconds + 's';
+            document.getElementById('flag-time-container').classList.remove('hidden');
+
+            // Show name input for leaderboard
+            document.getElementById('flag-leaderboard-submit').classList.remove('hidden');
+
+        } else {
+            document.getElementById('flag-time-container').classList.add('hidden');
+            document.getElementById('flag-leaderboard-submit').classList.add('hidden');
+        }
+
         displayGameResults(scoreOutOf10, 'geography', {
             resultImg: document.getElementById('flag-result-img'),
             resultMsg: document.getElementById('flag-result-msg'),
@@ -308,6 +331,77 @@ const flagGame = {
             bestStreak: document.getElementById('flag-best-streak'),
             bestStreakValue: this.bestStreak
         }, this.maxQuestions);
+    },
+
+    async submitToLeaderboard() {
+        const name = document.getElementById('flag-player-name').value.trim();
+        if (!name) {
+            alert('Entre ton nom !');
+            return;
+        }
+
+        const timeInSeconds = ((this.endTime - this.startTime) / 1000);
+
+        try {
+            const response = await fetch('/flag-game/api/submit-score', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: name,
+                    score: this.score / 10,
+                    time: timeInSeconds
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert(`🎉 Score enregistré ! Tu es ${data.rank}/${data.total}`);
+                document.getElementById('flag-leaderboard-submit').classList.add('hidden');
+                this.showLeaderboard();
+            }
+        } catch (error) {
+            console.error('Error submitting score:', error);
+            alert('Erreur lors de l\'enregistrement du score');
+        }
+    },
+
+    async showLeaderboard() {
+        try {
+            const response = await fetch('/flag-game/api/leaderboard');
+            const data = await response.json();
+
+            const leaderboardDiv = document.getElementById('flag-leaderboard');
+            leaderboardDiv.innerHTML = '<h3>🏆 Classement</h3>';
+
+            const table = document.createElement('table');
+            table.className = 'leaderboard-table';
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Rang</th>
+                        <th>Nom</th>
+                        <th>Score</th>
+                        <th>Temps</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.leaderboard.map((entry, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${entry.name}</td>
+                            <td>${entry.score}/10</td>
+                            <td>${entry.time.toFixed(1)}s</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+
+            leaderboardDiv.appendChild(table);
+            leaderboardDiv.classList.remove('hidden');
+        } catch (error) {
+            console.error('Error loading leaderboard:', error);
+        }
     }
 };
 
