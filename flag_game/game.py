@@ -146,7 +146,9 @@ def load_countries():
                     'population': safe_int(row.get('population', 0)),
                     'area': safe_int(row.get('area', 0)),
                     'gdp': safe_int(row.get('gdp', 0)),
-                    'density': safe_float(row.get('density', 0))
+                    'density': safe_float(row.get('density', 0)),
+                    'gdp_per_capita': safe_int(row.get('gdp', 0)) / safe_int(row.get('population', 1)) if safe_int(
+                        row.get('population', 0)) > 0 else 0  # ADD THIS - Calculate GDP per capita
                 })
 
         print(f"✓ Loaded {len(countries_data)} countries for flag game")

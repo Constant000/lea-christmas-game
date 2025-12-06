@@ -42,6 +42,206 @@ print(f"  - Playoffs: {'✓' if playoffs else '✗'}")
 
 # Question templates
 QUESTIONS = [
+    {
+        'type': 'rwc_meilleur_marqueur_essais',
+        'generate': lambda: {
+            'question': 'Qui a marqué le plus d\'essais à la Coupe du Monde 2023 ?',
+            'options': ['Will Jordan', 'Damian Penaud', 'Bundee Aki', 'Henry Arundell'],
+            'correct': 'Will Jordan'
+        }
+    },
+    {
+        'type': 'rwc_meilleur_buteur',
+        'generate': lambda: {
+            'question': 'Qui a marqué le plus de points à la Coupe du Monde 2023 ?',
+            'options': ['Owen Farrell', 'Thomas Ramos', 'Emiliano Boffelli', 'Johnny Sexton'],
+            'correct': 'Owen Farrell'
+        }
+    },
+    {
+        'type': 'rwc_points_farrell',
+        'generate': lambda: {
+            'question': 'Combien de points Owen Farrell a-t-il marqué à la Coupe du Monde 2023 ?',
+            'options': ['75', '85', '65', '95'],
+            'correct': '75'
+        }
+    },
+    {
+        'type': 'rwc_essais_jordan',
+        'generate': lambda: {
+            'question': 'Combien d\'essais Will Jordan a-t-il marqué à la Coupe du Monde 2023 ?',
+            'options': ['8', '6', '10', '5'],
+            'correct': '8'
+        }
+    },
+    {
+        'type': 'rwc_conversions_ramos',
+        'generate': lambda: {
+            'question': 'Combien de transformations Thomas Ramos a-t-il réussi à la Coupe du Monde 2023 ?',
+            'options': ['21', '18', '25', '15'],
+            'correct': '21'
+        }
+    },
+    {
+        'type': 'rwc_plus_de_courses',
+        'generate': lambda: {
+            'question': 'Qui a fait le plus de courses (runs) à la Coupe du Monde 2023 ?',
+            'options': ['Ardie Savea', 'Bundee Aki', 'Beauden Barrett', 'Ben Earl'],
+            'correct': 'Ardie Savea'
+        }
+    },
+    {
+        'type': 'rwc_courses_savea',
+        'generate': lambda: {
+            'question': 'Combien de courses Ardie Savea a-t-il effectué à la Coupe du Monde 2023 ?',
+            'options': ['82', '72', '92', '67'],
+            'correct': '82'
+        }
+    },
+    {
+        'type': 'rwc_offloads',
+        'generate': lambda: {
+            'question': 'Qui a fait le plus d\'offloads à la Coupe du Monde 2023 ?',
+            'options': ['Salesi Piutau', 'Antoine Dupont', 'Ardie Savea', 'Duncan Paia\'aua'],
+            'correct': 'Salesi Piutau'
+        }
+    },
+    {
+        'type': 'rwc_clean_breaks',
+        'generate': lambda: {
+            'question': 'Qui a fait le plus de clean breaks à la Coupe du Monde 2023 ?',
+            'options': ['Damian Penaud', 'Will Jordan', 'Bundee Aki', 'Louis Bielle-Biarrey'],
+            'correct': 'Damian Penaud'
+        }
+    },
+    {
+        'type': 'rwc_plaquages',
+        'generate': lambda: {
+            'question': 'Qui a fait le plus de plaquages à la Coupe du Monde 2023 ?',
+            'options': ['Marcos Kremer', 'Ben Earl', 'Franco Mostert', 'Pieter-Steph Du Toit'],
+            'correct': 'Marcos Kremer'
+        }
+    },
+    {
+        'type': 'rwc_plaquages_kremer',
+        'generate': lambda: {
+            'question': 'Combien de plaquages Marcos Kremer a-t-il effectué à la Coupe du Monde 2023 ?',
+            'options': ['92', '80', '73', '85'],
+            'correct': '92'
+        }
+    },
+    {
+        'type': 'rwc_equipe_plus_points',
+        'generate': lambda: {
+            'question': 'Quelle équipe a marqué le plus de points à la Coupe du Monde 2023 ?',
+            'options': ['Nouvelle-Zélande', 'France', 'Angleterre', 'Irlande'],
+            'correct': 'Nouvelle-Zélande'
+        }
+    },
+    {
+        'type': 'rwc_points_all_blacks',
+        'generate': lambda: {
+            'question': 'Combien de points la Nouvelle-Zélande a-t-elle marqué à la Coupe du Monde 2023 ?',
+            'options': ['336', '238', '280', '310'],
+            'correct': '336'
+        }
+    },
+    {
+        'type': 'rwc_equipe_plus_essais',
+        'generate': lambda: {
+            'question': 'Quelle équipe a marqué le plus d\'essais à la Coupe du Monde 2023 ?',
+            'options': ['Nouvelle-Zélande', 'Irlande', 'France', 'Afrique du Sud'],
+            'correct': 'Nouvelle-Zélande'
+        }
+    },
+    {
+        'type': 'rwc_essais_all_blacks',
+        'generate': lambda: {
+            'question': 'Combien d\'essais la Nouvelle-Zélande a-t-elle marqué à la Coupe du Monde 2023 ?',
+            'options': ['49', '30', '40', '55'],
+            'correct': '49'
+        }
+    },
+    {
+        'type': 'rwc_equipe_plus_plaquages',
+        'generate': lambda: {
+            'question': 'Quelle équipe a fait le plus de plaquages à la Coupe du Monde 2023 ?',
+            'options': ['Afrique du Sud', 'Angleterre', 'Nouvelle-Zélande', 'Pays de Galles'],
+            'correct': 'Afrique du Sud'
+        }
+    },
+    {
+        'type': 'rwc_plaquages_springboks',
+        'generate': lambda: {
+            'question': 'Combien de plaquages l\'Afrique du Sud a-t-elle effectué à la Coupe du Monde 2023 ?',
+            'options': ['972', '869', '864', '835'],
+            'correct': '972'
+        }
+    },
+    {
+        'type': 'rwc_equipe_plus_offloads',
+        'generate': lambda: {
+            'question': 'Quelle équipe a fait le plus d\'offloads à la Coupe du Monde 2023 ?',
+            'options': ['Nouvelle-Zélande', 'Écosse', 'France', 'Irlande'],
+            'correct': 'Nouvelle-Zélande'
+        }
+    },
+    {
+        'type': 'rwc_equipe_plus_clean_breaks',
+        'generate': lambda: {
+            'question': 'Quelle équipe a fait le plus de clean breaks à la Coupe du Monde 2023 ?',
+            'options': ['Nouvelle-Zélande', 'France', 'Écosse', 'Argentine'],
+            'correct': 'Nouvelle-Zélande'
+        }
+    },
+    {
+        'type': 'rwc_clean_breaks_all_blacks',
+        'generate': lambda: {
+            'question': 'Combien de clean breaks la Nouvelle-Zélande a-t-elle fait à la Coupe du Monde 2023 ?',
+            'options': ['88', '55', '72', '95'],
+            'correct': '88'
+        }
+    },
+    {
+        'type': 'rwc_cartons_jaunes_equipe',
+        'generate': lambda: {
+            'question': 'Quelle équipe a reçu le plus de cartons jaunes à la Coupe du Monde 2023 ?',
+            'options': ['Roumanie', 'Nouvelle-Zélande', 'Fidji', 'Samoa'],
+            'correct': 'Roumanie'
+        }
+    },
+    {
+        'type': 'rwc_cartons_rouges_equipe',
+        'generate': lambda: {
+            'question': 'Quelle équipe a reçu le plus de cartons rouges à la Coupe du Monde 2023 ?',
+            'options': ['Nouvelle-Zélande', 'Namibie', 'Tonga', 'Samoa'],
+            'correct': 'Nouvelle-Zélande'
+        }
+    },
+    {
+        'type': 'rwc_dupont_offloads',
+        'generate': lambda: {
+            'question': 'Combien d\'offloads Antoine Dupont a-t-il fait à la Coupe du Monde 2023 ?',
+            'options': ['10', '8', '12', '6'],
+            'correct': '10'
+        }
+    },
+    {
+        'type': 'rwc_penaud_clean_breaks',
+        'generate': lambda: {
+            'question': 'Combien de clean breaks Damian Penaud a-t-il fait à la Coupe du Monde 2023 ?',
+            'options': ['13', '12', '10', '15'],
+            'correct': '13'
+        }
+    },
+    {
+        'type': 'rwc_earl_plaquages',
+        'generate': lambda: {
+            'question': 'Combien de plaquages Ben Earl a-t-il effectué à la Coupe du Monde 2023 ?',
+            'options': ['80', '92', '73', '66'],
+            'correct': '80'
+        }
+    },
     # Questions sur le classement
     {
         'type': 'classement_champion',
@@ -234,6 +434,103 @@ QUESTIONS = [
             'correct_val': stats['matches']['victoires_domicile']['pourcentage'],
             'options': lambda v: [f"{v}%", f"{v + 5}%", f"{v - 10}%", f"{v + 15}%"],
             'correct': lambda v: f"{v}%"
+        }
+    },
+    # Questions sur le Tournoi des 6 Nations 2024
+    {
+        'type': '6n_champion_2024',
+        'generate': lambda: {
+            'question': 'Quelle équipe a remporté le Tournoi des 6 Nations 2024 ?',
+            'options': ['France', 'Angleterre', 'Irlande', 'Écosse'],
+            'correct': 'France'
+        }
+    },
+    {
+        'type': '6n_points_france',
+        'generate': lambda: {
+            'question': 'Combien de points la France a-t-elle au classement du Tournoi des 6 Nations 2024 ?',
+            'options': ['21', '20', '19', '18'],
+            'correct': '21'
+        }
+    },
+    {
+        'type': '6n_deuxieme_place',
+        'generate': lambda: {
+            'question': 'Quelle équipe a terminé 2ème du Tournoi des 6 Nations 2024 ?',
+            'options': ['Angleterre', 'Irlande', 'Écosse', 'France'],
+            'correct': 'Angleterre'
+        }
+    },
+    {
+        'type': '6n_derniere_place',
+        'generate': lambda: {
+            'question': 'Quelle équipe a terminé dernière du Tournoi des 6 Nations 2024 ?',
+            'options': ['Pays de Galles', 'Italie', 'Écosse', 'France'],
+            'correct': 'Pays de Galles'
+        }
+    },
+    {
+        'type': '6n_france_points_marques',
+        'generate': lambda: {
+            'question': 'Combien de points la France a-t-elle marqué au total dans le Tournoi des 6 Nations 2024 ?',
+            'options': ['218', '179', '238', '195'],
+            'correct': '218'
+        }
+    },
+    {
+        'type': '6n_france_galles',
+        'generate': lambda: {
+            'question': 'Quel était le score de France vs Pays de Galles (1er match) ?',
+            'options': ['43-0', '35-10', '50-5', '38-7'],
+            'correct': '43-0'
+        }
+    },
+    {
+        'type': '6n_irlande_france',
+        'generate': lambda: {
+            'question': 'Quel était le score de Irlande vs France (dernier match) ?',
+            'options': ['27-42', '30-35', '25-40', '20-45'],
+            'correct': '27-42'
+        }
+    },
+    {
+        'type': '6n_angleterre_galles',
+        'generate': lambda: {
+            'question': 'Quel était le score de Pays de Galles vs Angleterre ?',
+            'options': ['14-68', '10-50', '20-60', '7-55'],
+            'correct': '14-68'
+        }
+    },
+    {
+        'type': '6n_france_ecosse',
+        'generate': lambda: {
+            'question': 'Quel était le score de France vs Écosse (dernier match) ?',
+            'options': ['35-16', '30-20', '40-15', '28-18'],
+            'correct': '35-16'
+        }
+    },
+    {
+        'type': '6n_ecosse_irlande',
+        'generate': lambda: {
+            'question': 'Quel était le score de Écosse vs Irlande ?',
+            'options': ['18-32', '20-30', '15-28', '22-35'],
+            'correct': '18-32'
+        }
+    },
+    {
+        'type': '6n_victoires_france',
+        'generate': lambda: {
+            'question': 'Combien de victoires la France a-t-elle obtenu dans le Tournoi des 6 Nations 2024 ?',
+            'options': ['4', '5', '3', '2'],
+            'correct': '4'
+        }
+    },
+    {
+        'type': '6n_defaites_galles',
+        'generate': lambda: {
+            'question': 'Combien de défaites le Pays de Galles a-t-il subi dans le Tournoi des 6 Nations 2024 ?',
+            'options': ['5', '4', '3', '2'],
+            'correct': '5'
         }
     },
 ]

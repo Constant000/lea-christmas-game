@@ -154,24 +154,61 @@ const flagGame = {
     },
 
     generateQuestion() {
-        if (gameData.countries.length < 4) return null;
+        console.log('🎲 Generating question...');
+        console.log('🎲 Countries available:', gameData.countries.length);
 
-        const metrics = ['population', 'area', 'gdp', 'density'];
+        if (gameData.countries.length < 4) {
+            console.error('❌ Not enough countries');
+            return null;
+        }
+
+        const metrics = ['population', 'area', 'gdp', 'density', 'gdp_per_capita', 'flag_guess'];
         const metric = metrics[Math.floor(Math.random() * metrics.length)];
 
+        console.log('🎲 Selected metric:', metric);
+
+        // Special case: Flag guessing game
+        if (metric === 'flag_guess') {
+            console.log('🎌 Generating flag guess question...');
+            const shuffled = [...gameData.countries].sort(() => Math.random() - 0.5);
+            const selected = shuffled.slice(0, 4);
+            const correctCountry = selected[Math.floor(Math.random() * 4)];
+
+            console.log('✅ Flag guess question generated for:', correctCountry.name);
+            return {
+                question: 'Quel est ce drapeau ?',
+                metric: 'flag_guess',
+                showFlag: correctCountry.iso2,
+                options: selected.map(c => ({
+                    name: c.name,
+                    iso2: c.iso2,
+                    value: 0
+                })),
+                correct_answer: correctCountry.name
+            };
+        }
+
         const validCountries = gameData.countries.filter(c => c[metric] > 0);
-        if (validCountries.length < 4) return null;
+        console.log('🎲 Valid countries for', metric, ':', validCountries.length);
+
+        if (validCountries.length < 4) {
+            console.error('❌ Not enough valid countries for metric:', metric);
+            return null;
+        }
 
         const shuffled = [...validCountries].sort(() => Math.random() - 0.5);
         const selected = shuffled.slice(0, 4);
         const sorted = [...selected].sort((a, b) => b[metric] - a[metric]);
 
         const questionTexts = {
-            'population': 'Allez ma loute, quel pays a la plus grande population ?',
+            'population': 'Allez ma loute, quel pays à la plus grande population ?',
             'area': 'Quel pays a la plus grande superficie (en terrains de rugby) ?',
             'gdp': 'Quel pays a le plus grand PIB ? (pas par habitant hein)',
-            'density': 'Quel pays a la plus grande densité de population ?'
+            'density': 'Quel pays a la plus grande densité de population ?',
+            'gdp_per_capita': 'Quel pays a le plus grand PIB par habitant ?'
         };
+
+        console.log('✅ Question generated for metric:', metric);
 
         return {
             question: questionTexts[metric],
@@ -197,6 +234,10 @@ const flagGame = {
             return '$' + num.toFixed(2) + 'M';
         } else if (metric === 'density') {
             return num.toFixed(1) + ' per km²';
+        } else if (metric === 'gdp_per_capita') {
+            return '$' + num.toLocaleString() + ' par habitant';
+        } else if (metric === 'flag_guess') {
+            return ''; // No value shown for flag guessing
         }
         return num.toLocaleString();
     },
@@ -221,18 +262,43 @@ const flagGame = {
         const optionsContainer = document.getElementById('flag-options');
         optionsContainer.innerHTML = '';
 
+        // Special display for flag guessing
+        if (questionData.metric === 'flag_guess') {
+            // Show the flag to guess above options
+            const flagDisplay = document.createElement('div');
+            flagDisplay.style.cssText = 'text-align: center; margin-bottom: 30px;';
+            flagDisplay.innerHTML = `
+                <img src="https://flagcdn.com/w320/${questionData.showFlag.toLowerCase()}.png" 
+                     alt="Drapeau à deviner" 
+                     style="max-width: 300px; height: auto; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            `;
+            document.getElementById('flag-question').after(flagDisplay);
+            flagDisplay.id = 'flag-to-guess';
+        } else {
+            // Remove flag display if it exists
+            const existingFlag = document.getElementById('flag-to-guess');
+            if (existingFlag) existingFlag.remove();
+        }
+
         questionData.options.forEach(option => {
             const card = document.createElement('div');
             card.className = 'option-card';
             card.onclick = () => this.checkAnswer(option.name, card);
 
-            card.innerHTML = `
-                <img src="https://flagcdn.com/w320/${option.iso2.toLowerCase()}.png" 
-                     alt="${option.name}" 
-                     class="flag-image">
-                <div class="country-name">${option.name}</div>
-                <div class="country-value" data-value="${option.value}">???</div>
-            `;
+            // For flag guessing, don't show flags in options
+            if (questionData.metric === 'flag_guess') {
+                card.innerHTML = `
+                    <div class="country-name" style="font-size: 1.5rem;">${option.name}</div>
+                `;
+            } else {
+                card.innerHTML = `
+                    <img src="https://flagcdn.com/w320/${option.iso2.toLowerCase()}.png" 
+                         alt="${option.name}" 
+                         class="flag-image">
+                    <div class="country-name">${option.name}</div>
+                    <div class="country-value" data-value="${option.value}">???</div>
+                `;
+            }
 
             optionsContainer.appendChild(card);
         });
@@ -256,11 +322,16 @@ const flagGame = {
             const countryNameElement = card.querySelector('.country-name');
             if (!countryNameElement) return;
             const countryName = countryNameElement.textContent;
-            const valueDiv = card.querySelector('.country-value');
-            const value = parseInt(valueDiv.dataset.value);
 
-            valueDiv.textContent = this.formatNumber(value, this.currentMetric);
-            valueDiv.classList.add('revealed');
+            // Only show values if not flag guessing
+            if (this.currentMetric !== 'flag_guess') {
+                const valueDiv = card.querySelector('.country-value');
+                if (valueDiv) {
+                    const value = parseInt(valueDiv.dataset.value);
+                    valueDiv.textContent = this.formatNumber(value, this.currentMetric);
+                    valueDiv.classList.add('revealed');
+                }
+            }
 
             if (countryName === this.currentCorrectAnswer) {
                 card.classList.add('correct');
@@ -270,41 +341,38 @@ const flagGame = {
         });
 
         if (isCorrect) {
-        this.score += 10;
-        this.streak++;
-        if (this.streak > this.bestStreak) this.bestStreak = this.streak;
-    } else {
-        this.streak = 0;
-    }
-
-    document.getElementById('flag-score').textContent = this.score;
-
-    const resultDiv = document.getElementById('flag-result');
-    resultDiv.classList.remove('hidden');
-
-    if (isCorrect) {
-        resultDiv.textContent = '✅ Tu es la best! bravo!';
-        resultDiv.className = 'result correct';
-    } else {
-        resultDiv.textContent = `❌ Faux! C'était ${this.currentCorrectAnswer}`;
-        resultDiv.className = 'result wrong';
-    }
-
-    // Hide the next button (not needed anymore)
-    document.getElementById('flag-next-btn').classList.add('hidden');
-
-    this.questionNum++;
-
-    // Auto-advance after 2 seconds
-    setTimeout(() => {
-        if (this.questionNum >= this.maxQuestions) {
-            this.showGameOver();
+            this.score += 10;
+            this.streak++;
+            if (this.streak > this.bestStreak) this.bestStreak = this.streak;
         } else {
-            document.getElementById('flag-question-num').textContent = this.questionNum + 1;
-            this.loadQuestion();
+            this.streak = 0;
         }
-    }, 1000);
-},
+
+        document.getElementById('flag-score').textContent = this.score;
+
+        const resultDiv = document.getElementById('flag-result');
+        resultDiv.classList.remove('hidden');
+
+        if (isCorrect) {
+            resultDiv.textContent = '✅ Tu es la best! bravo!';
+            resultDiv.className = 'result correct';
+        } else {
+            resultDiv.textContent = `❌ Faux! C'était ${this.currentCorrectAnswer}`;
+            resultDiv.className = 'result wrong';
+        }
+
+        this.questionNum++;
+
+        setTimeout(() => {
+            if (this.questionNum >= this.maxQuestions) {
+                this.showGameOver();
+            } else {
+                document.getElementById('flag-question-num').textContent = this.questionNum + 1;
+                this.loadQuestion();
+            }
+        }, 1000);
+    },
+
     nextQuestion() {
         if (this.questionNum >= this.maxQuestions) {
             this.showGameOver();
@@ -473,7 +541,6 @@ const toulouseGame = {
 
         this.loadQuestion();
     },
-
     generateQuestion() {
         if (gameData.players.length === 0) return null;
 
