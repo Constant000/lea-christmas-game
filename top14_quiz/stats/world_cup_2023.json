@@ -1,0 +1,171 @@
+{
+  "tournament": "Rugby World Cup 2023",
+  "year": 2023,
+  "matches_played": 48,
+  "top_performers": {
+    "most_tries": {
+      "player": "Will Jordan",
+      "country": "New Zealand",
+      "value": 8
+    },
+    "most_conversions": {
+      "player": "Thomas Ramos",
+      "country": "France",
+      "value": 21
+    },
+    "most_runs": {
+      "player": "Ardie Savea",
+      "country": "New Zealand",
+      "value": 82
+    },
+    "most_points": {
+      "player": "Owen Farrell",
+      "country": "England",
+      "value": 75,
+      "breakdown": {
+        "tries": 0,
+        "conversions": 12,
+        "penalties": 15,
+        "drop_goals": 2
+      }
+    },
+    "most_offloads": {
+      "player": "Salesi Piutau",
+      "country": "Tonga",
+      "value": 10
+    },
+    "most_clean_breaks": {
+      "player": "Damian Penaud",
+      "country": "France",
+      "value": 13
+    },
+    "most_tackles": {
+      "player": "Marcos Kremer",
+      "country": "Argentina",
+      "value": 92
+    }
+  },
+  "top_5_players": {
+    "points": [
+      {"rank": 1, "player": "Owen Farrell", "country": "England", "value": 75},
+      {"rank": 2, "player": "Thomas Ramos", "country": "France", "value": 74},
+      {"rank": 3, "player": "Emiliano Boffelli", "country": "Argentina", "value": 67},
+      {"rank": 4, "player": "Johnny Sexton", "country": "Ireland", "value": 58},
+      {"rank": 5, "player": "Richie Mo'unga", "country": "New Zealand", "value": 56}
+    ],
+    "tries": [
+      {"rank": 1, "player": "Will Jordan", "country": "New Zealand", "value": 8},
+      {"rank": 2, "player": "Damian Penaud", "country": "France", "value": 6},
+      {"rank": 3, "player": "Bundee Aki", "country": "Ireland", "value": 5},
+      {"rank": 4, "player": "Henry Arundell", "country": "England", "value": 5},
+      {"rank": 5, "player": "Leicester Fainga'anuku", "country": "New Zealand", "value": 5}
+    ],
+    "runs": [
+      {"rank": 1, "player": "Ardie Savea", "country": "New Zealand", "value": 82},
+      {"rank": 2, "player": "Bundee Aki", "country": "Ireland", "value": 81},
+      {"rank": 3, "player": "Beauden Barrett", "country": "New Zealand", "value": 72},
+      {"rank": 4, "player": "Juan Cruz Mallia", "country": "Argentina", "value": 67},
+      {"rank": 5, "player": "Ben Earl", "country": "England", "value": 64}
+    ],
+    "conversions": [
+      {"rank": 1, "player": "Thomas Ramos", "country": "France", "value": 21},
+      {"rank": 2, "player": "Richie Mo'unga", "country": "New Zealand", "value": 18},
+      {"rank": 3, "player": "Johnny Sexton", "country": "Ireland", "value": 17},
+      {"rank": 4, "player": "Damian McKenzie", "country": "New Zealand", "value": 14},
+      {"rank": 5, "player": "Tommaso Allan", "country": "Italy", "value": 14}
+    ],
+    "offloads": [
+      {"rank": 1, "player": "Salesi Piutau", "country": "Tonga", "value": 10},
+      {"rank": 2, "player": "Antoine Dupont", "country": "France", "value": 10},
+      {"rank": 3, "player": "Ardie Savea", "country": "New Zealand", "value": 9},
+      {"rank": 4, "player": "Duncan Paia'aua", "country": "Australia", "value": 8},
+      {"rank": 5, "player": "Juan Cruz Mallia", "country": "Argentina", "value": 8}
+    ],
+    "tackles": [
+      {"rank": 1, "player": "Marcos Kremer", "country": "Argentina", "value": 92},
+      {"rank": 2, "player": "Ben Earl", "country": "England", "value": 80},
+      {"rank": 3, "player": "Franco Mostert", "country": "South Africa", "value": 73},
+      {"rank": 4, "player": "Sione Talitui", "country": "Samoa", "value": 67},
+      {"rank": 5, "player": "Pieter-Steph Du Toit", "country": "South Africa", "value": 66}
+    ],
+    "clean_breaks": [
+      {"rank": 1, "player": "Damian Penaud", "country": "France", "value": 13},
+      {"rank": 2, "player": "Will Jordan", "country": "New Zealand", "value": 12},
+      {"rank": 3, "player": "Bundee Aki", "country": "Ireland", "value": 10},
+      {"rank": 4, "player": "Louis Bielle-Biarrey", "country": "France", "value": 10},
+      {"rank": 5, "player": "Darcy Graham", "country": "Scotland", "value": 9}
+    ],
+    "yellow_cards": [
+      {"rank": 1, "player": "Marius Simionescu", "country": "Romania", "value": 2},
+      {"rank": 2, "player": "Matias Dittus", "country": "Chile", "value": 2},
+      {"rank": 3, "player": "Shota Horie", "country": "Japan", "value": 1},
+      {"rank": 4, "player": "Esteban Inostroza", "country": "Chile", "value": 1},
+      {"rank": 5, "player": "Robert Irimescu", "country": "Romania", "value": 1}
+    ],
+    "red_cards": [
+      {"rank": 1, "player": "Tom Curry", "country": "England", "value": 1},
+      {"rank": 2, "player": "Vincent Pinto", "country": "Namibia", "value": 1},
+      {"rank": 3, "player": "Desiderius Sethie", "country": "Namibia", "value": 1},
+      {"rank": 4, "player": "Vaea Fifita", "country": "Tonga", "value": 1},
+      {"rank": 5, "player": "Ethan de Groot", "country": "New Zealand", "value": 1}
+    ]
+  },
+  "top_5_teams": {
+    "points_scored": [
+      {"rank": 1, "team": "New Zealand", "value": 336},
+      {"rank": 2, "team": "France", "value": 238},
+      {"rank": 3, "team": "England", "value": 221},
+      {"rank": 4, "team": "Ireland", "value": 214},
+      {"rank": 5, "team": "South Africa", "value": 208}
+    ],
+    "tries_scored": [
+      {"rank": 1, "team": "New Zealand", "value": 49},
+      {"rank": 2, "team": "Ireland", "value": 30},
+      {"rank": 3, "team": "France", "value": 30},
+      {"rank": 4, "team": "South Africa", "value": 27},
+      {"rank": 5, "team": "England", "value": 21}
+    ],
+    "conversions": [
+      {"rank": 1, "team": "New Zealand", "value": 35},
+      {"rank": 2, "team": "Ireland", "value": 25},
+      {"rank": 3, "team": "France", "value": 25},
+      {"rank": 4, "team": "South Africa", "value": 19},
+      {"rank": 5, "team": "Scotland", "value": 19}
+    ],
+    "offloads": [
+      {"rank": 1, "team": "New Zealand", "value": 58},
+      {"rank": 2, "team": "Scotland", "value": 55},
+      {"rank": 3, "team": "France", "value": 53},
+      {"rank": 4, "team": "Ireland", "value": 47},
+      {"rank": 5, "team": "Fiji", "value": 44}
+    ],
+    "tackles": [
+      {"rank": 1, "team": "South Africa", "value": 972},
+      {"rank": 2, "team": "England", "value": 869},
+      {"rank": 3, "team": "New Zealand", "value": 864},
+      {"rank": 4, "team": "Wales", "value": 835},
+      {"rank": 5, "team": "Argentina", "value": 779}
+    ],
+    "clean_breaks": [
+      {"rank": 1, "team": "New Zealand", "value": 88},
+      {"rank": 2, "team": "France", "value": 55},
+      {"rank": 3, "team": "Scotland", "value": 45},
+      {"rank": 4, "team": "Argentina", "value": 44},
+      {"rank": 5, "team": "Ireland", "value": 44}
+    ],
+    "yellow_cards": [
+      {"rank": 1, "team": "Romania", "value": 5},
+      {"rank": 2, "team": "New Zealand", "value": 5},
+      {"rank": 3, "team": "Fiji", "value": 5},
+      {"rank": 4, "team": "Samoa", "value": 5},
+      {"rank": 5, "team": "Chile", "value": 5}
+    ],
+    "red_cards": [
+      {"rank": 1, "team": "New Zealand", "value": 2},
+      {"rank": 2, "team": "Namibia", "value": 2},
+      {"rank": 3, "team": "Tonga", "value": 1},
+      {"rank": 4, "team": "Samoa", "value": 1},
+      {"rank": 5, "team": "England", "value": 1}
+    ]
+  }
+}

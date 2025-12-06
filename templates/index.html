@@ -967,6 +967,247 @@
             color: #999;
             font-style: italic;
         }
+        /* Responsive pour les pages de jeu */
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 25px 15px;
+                max-width: 100%;
+            }
+
+            .game-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .subtitle {
+                font-size: 0.95rem;
+            }
+
+            .score {
+                font-size: 1.2rem;
+            }
+
+            .back-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+                top: 15px;
+                left: 15px;
+            }
+
+            /* Flag game */
+            .options-grid {
+                gap: 12px;
+            }
+
+            .option-card {
+                padding: 15px;
+                min-height: 220px;
+            }
+
+            .flag-image {
+                max-width: 150px;
+                height: 100px;
+            }
+
+            .country-name {
+                font-size: 1.1rem;
+                min-height: 2rem;
+            }
+
+            .country-value {
+                font-size: 0.9rem;
+            }
+
+            .question-text {
+                font-size: 1.3rem !important;
+                margin-bottom: 20px !important;
+            }
+
+            /* Toulouse game */
+            .player-image img {
+                max-width: 250px;
+                max-height: 250px;
+            }
+
+            .question-section {
+                margin: 20px 0;
+            }
+
+            .question-section h3 {
+                font-size: 1.1rem;
+            }
+
+            .options {
+                gap: 10px;
+            }
+
+            .option-btn {
+                padding: 12px 16px;
+                font-size: 1rem;
+            }
+
+            /* Quiz */
+            .question-box {
+                padding: 15px;
+                margin: 20px 0;
+            }
+
+            .question-box .question-text {
+                font-size: 1.2rem !important;
+            }
+
+            /* Pi game */
+            #pi-options .option-btn {
+                padding: 20px;
+                font-size: 1.6rem;
+            }
+
+            .pi-display {
+                font-size: 1.2rem !important;
+                padding: 15px !important;
+            }
+
+            .result {
+                font-size: 1rem;
+                padding: 15px;
+                margin: 20px 0;
+            }
+
+            .next-btn {
+                padding: 12px 32px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-container {
+                padding: 20px 12px;
+                border-radius: 15px;
+            }
+
+            .game-header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 8px;
+            }
+
+            .subtitle {
+                font-size: 0.85rem;
+            }
+
+            .score {
+                font-size: 1rem;
+                margin-bottom: 15px;
+            }
+
+            .back-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+                top: 10px;
+                left: 10px;
+            }
+
+            /* Flag game */
+            .options-grid {
+                gap: 10px;
+                grid-template-columns: 1fr;
+            }
+
+            .option-card {
+                padding: 12px;
+                min-height: auto;
+                flex-direction: row;
+                text-align: left;
+            }
+
+            .flag-image {
+                max-width: 80px;
+                height: 53px;
+                margin-right: 12px;
+                margin-bottom: 0;
+            }
+
+            .country-name {
+                font-size: 1rem;
+                min-height: auto;
+            }
+
+            .country-value {
+                font-size: 0.85rem;
+            }
+
+            .question-text {
+                font-size: 1.1rem !important;
+                margin-bottom: 15px !important;
+            }
+
+            /* Toulouse game */
+            .player-image img {
+                max-width: 200px;
+                max-height: 200px;
+            }
+
+            .question-section {
+                margin: 15px 0;
+            }
+
+            .question-section h3 {
+                font-size: 1rem;
+                margin-bottom: 10px;
+            }
+
+            .options {
+                gap: 8px;
+            }
+
+            .option-btn {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+            }
+
+            /* Quiz */
+            .question-box {
+                padding: 12px;
+                margin: 15px 0;
+            }
+
+            .question-box .question-text {
+                font-size: 1.05rem !important;
+            }
+
+            /* Pi game */
+            #pi-options {
+                gap: 10px;
+            }
+
+            #pi-options .option-btn {
+                padding: 15px;
+                font-size: 1.4rem;
+            }
+
+            .pi-display {
+                font-size: 1rem !important;
+                padding: 12px !important;
+                letter-spacing: 1px !important;
+            }
+
+            .result {
+                font-size: 0.95rem;
+                padding: 12px;
+                margin: 15px 0;
+            }
+
+            .next-btn {
+                padding: 10px 24px;
+                font-size: 0.95rem;
+            }
+
+            .game-over h2 {
+                font-size: 1.8rem;
+            }
+
+            .final-stats {
+                font-size: 1.1rem;
+            }
+        }
     </style>
 </head>
 <body>
