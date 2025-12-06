@@ -167,7 +167,7 @@ const flagGame = {
         const sorted = [...selected].sort((a, b) => b[metric] - a[metric]);
 
         const questionTexts = {
-            'population': 'Allez ma loute, quel pays à la plus grande population ?',
+            'population': 'Allez ma loute, quel pays a la plus grande population ?',
             'area': 'Quel pays a la plus grande superficie (en terrains de rugby) ?',
             'gdp': 'Quel pays a le plus grand PIB ? (pas par habitant hein)',
             'density': 'Quel pays a la plus grande densité de population ?'
