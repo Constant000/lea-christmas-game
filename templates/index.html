@@ -72,18 +72,28 @@
             background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
                         url('/static/background.png');
             background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background-position: center top;
+            background-attachment: scroll; /* Change de fixed à scroll */
         }
 
         .scroll-wrapper {
-            min-height: 100vh;
+            min-height: 120vh; /* Augmente de 100vh à 120vh pour forcer le scroll */
             padding: 20px;
             display: flex;
             align-items: flex-start;
             justify-content: center;
             padding-top: 10vh;
             padding-bottom: 30vh;
+        }
+
+        .scroll-wrapper {
+            min-height: 150vh;
+            padding: 20px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 10vh;
+            padding-bottom: 50vh;
         }
 
         .menu-container {
@@ -576,7 +586,64 @@
         #flag-game-page.active { display: flex !important; }
         #toulouse-game-page.active { display: flex !important; }
         #top14-quiz-page.active { display: flex !important; }
-            </style>
+
+        .offline-indicator-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: rgba(16, 185, 129, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            cursor: help;
+            transition: transform 0.2s;
+        }
+
+        .offline-indicator-badge:hover {
+            transform: scale(1.2);
+        }
+
+        .offline-indicator-badge::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -30px;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .offline-indicator-badge:hover::after {
+            opacity: 1;
+        }
+        .flag-image {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            aspect-ratio: 3/2;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 15px;
+            background: #f0f0f0; /* Fond gris si l'image ne charge pas */
+        }
+
+        /* Style pour les images cassées */
+        .flag-image[src=""] {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <!-- Offline Indicator -->
@@ -594,6 +661,7 @@
                 <div class="games-grid">
                     <div class="game-card" onclick="navigateTo('flag-game')">
                         <div class="game-icon">🌍</div>
+                        <div class="offline-indicator-badge" data-tooltip="Mode hors ligne">📡</div>
                         <div class="game-title">Géographie</div>
                         <div class="game-description">
                             Compare les pays par population, surface, GDP, et densité.
@@ -602,6 +670,7 @@
 
                     <div class="game-card rugby" onclick="navigateTo('toulouse-game')">
                         <div class="game-icon">🏉</div>
+                        <div class="offline-indicator-badge" data-tooltip="Mode hors ligne">📡</div>
                         <div class="game-title">Stade Toulousain</div>
                         <div class="game-description">
                             Devine le nom et le poste des joueurs du Stade Toulousain !
@@ -610,6 +679,7 @@
 
                     <div class="game-card quiz" onclick="navigateTo('top14-quiz')">
                         <div class="game-icon">📊</div>
+                        <div class="offline-indicator-badge" data-tooltip="Mode hors ligne">📡</div>
                         <div class="game-title">Quiz Top 14</div>
                         <div class="game-description">
                             Teste tes connaissances sur la saison 2024-2025 !
