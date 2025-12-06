@@ -162,12 +162,16 @@ const flagGame = {
             return null;
         }
 
-        const metrics = ['population', 'area', 'gdp', 'density', 'gdp_per_capita', 'flag_guess'];
+        // Remove flag_guess from metrics if offline (images won't load)
+        const metrics = isOffline
+            ? ['population', 'area', 'gdp', 'density', 'gdp_per_capita']
+            : ['population', 'area', 'gdp', 'density', 'gdp_per_capita', 'flag_guess'];
+
         const metric = metrics[Math.floor(Math.random() * metrics.length)];
 
         console.log('🎲 Selected metric:', metric);
 
-        // Special case: Flag guessing game
+        // Special case: Flag guessing game (ONLINE ONLY)
         if (metric === 'flag_guess') {
             console.log('🎌 Generating flag guess question...');
             const shuffled = [...gameData.countries].sort(() => Math.random() - 0.5);
@@ -188,6 +192,7 @@ const flagGame = {
             };
         }
 
+        // Rest of the code stays the same...
         const validCountries = gameData.countries.filter(c => c[metric] > 0);
         console.log('🎲 Valid countries for', metric, ':', validCountries.length);
 
