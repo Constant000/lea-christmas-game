@@ -25,8 +25,8 @@ RESULTS_FOLDER = Path(__file__).parent / "static" / "results"
 
 @app.route('/')
 def index():
-    """Main menu page."""
-    return render_template('menu.html')
+    """Single page application."""
+    return render_template('index.html')
 
 
 @app.route('/static/results/<path:filename>')
@@ -45,7 +45,19 @@ def manifest():
         "start_url": "/",
         "display": "standalone",
         "background_color": "#667eea",
-        "theme_color": "#667eea"
+        "theme_color": "#667eea",
+        "icons": [
+            {
+                "src": "/static/icon-192.png",
+                "sizes": "192x192",
+                "type": "image/png"
+            },
+            {
+                "src": "/static/icon-512.png",
+                "sizes": "512x512",
+                "type": "image/png"
+            }
+        ]
     })
 
 
@@ -56,13 +68,18 @@ def service_worker():
 
 
 if __name__ == '__main__':
-    print("\n🎮 Geography Games Collection")
+    print("\n🎮 Geography Games Collection - Single Page App")
     print("=" * 50)
     print("📱 Open http://127.0.0.1:5000 in your browser")
-    print("\n🎯 Available Games:")
-    print("   🌍 Flag Game: http://127.0.0.1:5000/flag-game/")
-    print("   🏉 Stade Toulousain: http://127.0.0.1:5000/toulouse-game/")
-    print("   📊 Top 14 Quiz: http://127.0.0.1:5000/top14-quiz/")
+    print("\n🎯 Features:")
+    print("   ✨ Single-page application (no page reloads)")
+    print("   📡 Offline mode support")
+    print("   🚀 Instant navigation between games")
+    print("   💾 Service Worker caching")
+    print("\n🎮 Games:")
+    print("   🌍 Flag Game")
+    print("   🏉 Stade Toulousain")
+    print("   📊 Top 14 Quiz")
     print("=" * 50 + "\n")
 
     # Configuration pour production/développement
