@@ -4,9 +4,9 @@ const CACHE_NAME = `lea-constant-games-${CACHE_VERSION}`;
 // Liste complète des fichiers à pré-cacher
 const PRECACHE_URLS = [
     '/',
-    '/flag_game/',
-    '/toulouse_game/',
-    '/top14_quiz/',
+    '/flag-game/',
+    '/toulouse-game/',
+    '/top14-quiz/',
     '/static/game_results.js',
     '/static/background.png',
     '/static/results/0-1-2.png',
