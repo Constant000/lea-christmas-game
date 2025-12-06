@@ -17,6 +17,12 @@ flag_game_bp = Blueprint('flag_game', __name__,
 FLAGS_FOLDER = Path(__file__).parent / "flags"
 countries_data = []
 
+@flag_game_bp.route('/api/all-countries')
+def get_all_countries():
+    """Get all countries data for offline mode."""
+    return jsonify({
+        'countries': countries_data
+    })
 
 def load_countries():
     """Load country data from CSV."""

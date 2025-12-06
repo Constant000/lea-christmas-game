@@ -1,12 +1,13 @@
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const CACHE_NAME = `lea-constant-games-${CACHE_VERSION}`;
 
-// Liste complète des fichiers à pré-cacher
+// Fichiers à pré-cacher
 const PRECACHE_URLS = [
     '/',
     '/flag-game/',
     '/toulouse-game/',
     '/top14-quiz/',
+    '/flag-game/api/all-countries',
     '/static/game_results.js',
     '/static/background.png',
     '/static/results/0-1-2.png',
@@ -14,6 +15,7 @@ const PRECACHE_URLS = [
     '/static/results/5-6.png',
     '/static/results/7-8.png',
     '/static/results/9-10.png',
+    '/manifest.json',
 ];
 
 // Installation
@@ -24,7 +26,6 @@ self.addEventListener('install', (event) => {
     (async () => {
       const cache = await caches.open(CACHE_NAME);
 
-      // Cache les URLs une par une
       for (const url of PRECACHE_URLS) {
         try {
           const response = await fetch(url);
@@ -51,7 +52,6 @@ self.addEventListener('activate', (event) => {
 
   event.waitUntil(
     (async () => {
-      // Supprime les anciens caches
       const cacheNames = await caches.keys();
       await Promise.all(
         cacheNames.map((cacheName) => {
@@ -68,7 +68,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch - Cache First avec fallback intelligent
+// Fetch
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
@@ -81,26 +81,12 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     (async () => {
-      // 1. Cherche dans le cache
       const cachedResponse = await caches.match(request);
       if (cachedResponse) {
         console.log('[SW] ✓ Cache:', request.url);
-
-        // Mise à jour en arrière-plan (stale-while-revalidate)
-        event.waitUntil(
-          fetch(request).then((response) => {
-            if (response && response.ok) {
-              caches.open(CACHE_NAME).then((cache) => {
-                cache.put(request, response);
-              });
-            }
-          }).catch(() => {})
-        );
-
         return cachedResponse;
       }
 
-      // 2. Sinon, fetch depuis le réseau
       try {
         console.log('[SW] ⟳ Network:', request.url);
         const response = await fetch(request);
@@ -115,22 +101,12 @@ self.addEventListener('fetch', (event) => {
       } catch (error) {
         console.log('[SW] ✗ Network failed:', request.url);
 
-        // 3. Fallback intelligent
-        // Pour les pages HTML, retourne la page d'accueil
         if (request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
           const homeCache = await caches.match('/');
           if (homeCache) {
             console.log('[SW] ⟳ Fallback to home');
             return homeCache;
           }
-        }
-
-        // Pour les API, retourne une réponse vide
-        if (request.url.includes('/api/')) {
-          return new Response(
-            JSON.stringify({ error: 'Offline - no cached data' }),
-            { headers: { 'Content-Type': 'application/json' } }
-          );
         }
 
         throw error;

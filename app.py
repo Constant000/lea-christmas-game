@@ -4,7 +4,7 @@ Geography Games Collection
 Main menu to access different games
 """
 
-from flask import Flask, render_template, send_from_directory, send_file
+from flask import Flask, render_template, send_from_directory, jsonify
 from pathlib import Path
 import os
 
@@ -35,10 +35,24 @@ def serve_result_image(filename):
     return send_from_directory(RESULTS_FOLDER, filename)
 
 
+@app.route('/manifest.json')
+def manifest():
+    """Serve PWA manifest."""
+    return jsonify({
+        "name": "Jeux de Léa & Constant",
+        "short_name": "L&C Games",
+        "description": "Collection de jeux de géographie et rugby",
+        "start_url": "/",
+        "display": "standalone",
+        "background_color": "#667eea",
+        "theme_color": "#667eea"
+    })
+
+
 @app.route('/service-worker.js')
 def service_worker():
     """Serve service worker."""
-    return send_file('static/service-worker.js', mimetype='application/javascript')
+    return send_from_directory('static', 'service-worker.js', mimetype='application/javascript')
 
 
 if __name__ == '__main__':
