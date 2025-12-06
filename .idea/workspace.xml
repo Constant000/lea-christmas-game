@@ -5,12 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a30988d3-886b-4399-9a41-80385973ec68" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/static/app.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flag_game/templates/flag_game.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/app.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/game_results.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/game_results.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/service-worker.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/service-worker.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/menu.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/top14_quiz/templates/top14_quiz.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/toulouse_game/templates/toulouse_game.html" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

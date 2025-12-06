@@ -3,7 +3,7 @@
  * Caches all assets and provides offline functionality
  */
 
-const CACHE_NAME = 'lea-constant-games-v1';
+const CACHE_NAME = 'lea-constant-games-v19';
 const ASSETS_TO_CACHE = [
     '/',
     '/static/app.js',
@@ -13,7 +13,7 @@ const ASSETS_TO_CACHE = [
     '/static/results/3-4.png',
     '/static/results/5-6.png',
     '/static/results/7-8.png',
-    '/static/results/9=10.png',
+    '/static/results/9-10.png',
     '/manifest.json'
 ];
 
@@ -27,6 +27,9 @@ self.addEventListener('install', (event) => {
                 return cache.addAll(ASSETS_TO_CACHE);
             })
             .then(() => self.skipWaiting())
+            .catch((error) => {
+                console.error('[SW] Install failed:', error);
+            })
     );
 });
 
@@ -49,19 +52,37 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
+    // Ignore non-http(s) requests (chrome-extension, etc.)
+    if (!event.request.url.startsWith('http')) {
+        return;
+    }
+
     event.respondWith(
         caches.match(event.request)
             .then((response) => {
                 // Return cached version or fetch from network
                 return response || fetch(event.request)
                     .then((fetchResponse) => {
-                        // Cache new resources (except API calls)
-                        if (!event.request.url.includes('/api/')) {
-                            return caches.open(CACHE_NAME).then((cache) => {
-                                cache.put(event.request, fetchResponse.clone());
-                                return fetchResponse;
-                            });
+                        // Only cache valid responses
+                        if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type === 'error') {
+                            return fetchResponse;
                         }
+
+                        // Don't cache API calls
+                        if (event.request.url.includes('/api/')) {
+                            return fetchResponse;
+                        }
+
+                        // Clone and cache the response
+                        const responseToCache = fetchResponse.clone();
+
+                        caches.open(CACHE_NAME).then((cache) => {
+                            cache.put(event.request, responseToCache).catch((error) => {
+                                // Silently ignore cache errors (e.g., from extensions)
+                                console.warn('[SW] Cache put failed:', error.message);
+                            });
+                        });
+
                         return fetchResponse;
                     })
                     .catch(() => {
@@ -71,7 +92,7 @@ self.addEventListener('fetch', (event) => {
                             return new Response('', { status: 404 });
                         }
                         // For HTML requests, return cached index
-                        if (event.request.headers.get('accept').includes('text/html')) {
+                        if (event.request.headers.get('accept')?.includes('text/html')) {
                             return caches.match('/');
                         }
                     });

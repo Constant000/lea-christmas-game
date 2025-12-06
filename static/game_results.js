@@ -33,7 +33,7 @@ const RESULT_DATA = {
         }
     },
     '9-10': {
-        image: '/static/results/9=10.png',
+        image: '/static/results/9-10.png',
         messages: {
             rugby: '🏆 PARFAIT ! Tu es un vrai expert du Stade Toulousain ! Chapeau l\'artiste ! 🎉 Tu es une reine inégalé',
             geography: '🏆 SCORE PARFAIT ! Tu es un véritable génie de la géographie ! 🌍✨ La reine des drapeaux ! '

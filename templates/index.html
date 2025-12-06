@@ -20,21 +20,34 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
             font-family: Arial, sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100%;
+            overflow: hidden; /* Prevent body scroll */
         }
 
         /* Hide all pages by default */
         .page {
-            display: none;
+            display: none !important; /* Force hide */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            z-index: 1;
         }
 
         .page.active {
-            display: block;
+            display: block !important; /* Force show */
+            z-index: 10;
         }
 
+        /* ===== GAME PAGE COMMON STYLES ===== */
+        .game-page.active {
+            display: flex !important; /* Flex layout only when active */
+        }
         /* Offline indicator */
         .offline-indicator {
             position: fixed;
@@ -61,11 +74,10 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            min-height: 100vh;
         }
 
         .scroll-wrapper {
-            min-height: 150vh;
+            min-height: 100vh;
             padding: 20px;
             display: flex;
             align-items: flex-start;
@@ -154,11 +166,13 @@
 
         /* ===== GAME PAGE COMMON STYLES ===== */
         .game-page {
-            min-height: 100vh;
-            display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+        }
+
+        .game-page.active {
+            display: flex !important;
         }
 
         .game-container {
@@ -169,6 +183,7 @@
             width: 100%;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             position: relative;
+            margin: auto;
         }
 
         .back-btn {
@@ -534,7 +549,34 @@
             .game-header h1 { font-size: 1.5rem; }
             .back-btn { padding: 8px 12px; font-size: 0.9em; }
         }
-    </style>
+
+        /* ABSOLUTE FORCE - HIDE ALL NON-ACTIVE PAGES */
+        .page {
+            display: none !important;
+        }
+
+        .page.active {
+            display: block !important;
+        }
+
+        .page.game-page {
+            display: none !important;
+        }
+
+        .page.game-page.active {
+            display: flex !important;
+        }
+
+        /* Extra safety - force hide by ID */
+        #flag-game-page { display: none !important; }
+        #toulouse-game-page { display: none !important; }
+        #top14-quiz-page { display: none !important; }
+
+        #menu-page.active { display: block !important; }
+        #flag-game-page.active { display: flex !important; }
+        #toulouse-game-page.active { display: flex !important; }
+        #top14-quiz-page.active { display: flex !important; }
+            </style>
 </head>
 <body>
     <!-- Offline Indicator -->

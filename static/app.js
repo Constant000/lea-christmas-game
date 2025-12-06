@@ -3,6 +3,13 @@
  * Handles routing, offline mode, and game initialization
  */
 
+// ===== DEBUG - Add this at the very top of app.js =====
+console.log('🔍 Script loaded');
+console.log('🔍 Pages found:', document.querySelectorAll('.page').length);
+document.querySelectorAll('.page').forEach(p => {
+    console.log('  -', p.id, 'active:', p.classList.contains('active'));
+});
+
 // ===== GLOBAL STATE =====
 let isOffline = !navigator.onLine;
 let gameData = {
@@ -186,48 +193,50 @@ const flagGame = {
     },
 
     loadQuestion() {
-        const data = this.generateQuestion();
-        if (!data) {
+        console.log('🎯 Flag game - loading question');
+        console.log('🎯 Countries available:', gameData.countries.length);
+
+        const questionData = this.generateQuestion();
+        console.log('🎯 Generated question:', questionData);
+
+        if (!questionData) {
             alert('Erreur: Pas assez de données');
             return;
         }
 
-        this.currentCorrectAnswer = data.correct_answer;
-        this.currentMetric = data.metric;
+        this.currentCorrectAnswer = questionData.correct_answer;
+        this.currentMetric = questionData.metric;
 
-        document.getElementById('flag-question').textContent = data.question;
+        document.getElementById('flag-question').textContent = questionData.question;
 
         const optionsContainer = document.getElementById('flag-options');
         optionsContainer.innerHTML = '';
 
-        data.options.forEach(option => {
+        questionData.options.forEach(option => {
             const card = document.createElement('div');
             card.className = 'option-card';
             card.onclick = () => this.checkAnswer(option.name, card);
 
-            if (isOffline) {
-                card.innerHTML = `
-                    <div style="font-size: 4rem; margin-bottom: 15px;">🌍</div>
-                    <div class="country-name">${option.name}</div>
-                    <div class="country-value" data-value="${option.value}">???</div>
-                `;
-            } else {
-                card.innerHTML = `
-                    <img src="/flag-game/flags/${option.iso2}.png"
-                         alt="${option.name}"
-                         class="flag-image"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="font-size: 4rem; margin-bottom: 15px; display: none;">🌍</div>
-                    <div class="country-name">${option.name}</div>
-                    <div class="country-value" data-value="${option.value}">???</div>
-                `;
-            }
+            card.innerHTML = `
+                <img src="https://flagcdn.com/w320/${option.iso2.toLowerCase()}.png" 
+                     alt="${option.name}" 
+                     class="flag-image"
+                     onerror="this.src='/static/placeholder-flag.png'">
+                <div class="country-name">${option.name}</div>
+                <div class="country-value" data-value="${option.value}">???</div>
+            `;
 
             optionsContainer.appendChild(card);
         });
 
         document.getElementById('flag-result').classList.add('hidden');
         document.getElementById('flag-next-btn').classList.add('hidden');
+
+        // Hide loading, show content
+        document.getElementById('flag-loading').classList.add('hidden');
+        document.getElementById('flag-game-content').classList.remove('hidden');
+
+        console.log('✅ Flag question displayed');
     },
 
     checkAnswer(selectedAnswer, selectedCard) {
@@ -554,19 +563,24 @@ const quizGame = {
     },
 
     restart() {
+        console.log('🔄 Restarting quiz...');
         this.score = 0;
         this.questionNum = 0;
 
         document.getElementById('quiz-score').textContent = this.score;
         document.getElementById('quiz-question-num').textContent = 1;
-        document.getElementById('quiz-game-content').classList.remove('hidden');
         document.getElementById('quiz-game-over').classList.add('hidden');
-        document.getElementById('quiz-loading').classList.add('hidden');
 
-        this.loadQuestion();
+        this.loadQuestion();  // loadQuestion will handle showing/hiding loading
     },
 
     async loadQuestion() {
+        console.log('📝 Loading quiz question...');
+
+        // Show loading, hide content
+        document.getElementById('quiz-loading').classList.remove('hidden');
+        document.getElementById('quiz-game-content').classList.add('hidden');
+
         try {
             const response = await fetch('/top14-quiz/api/question');
             const data = await response.json();
@@ -574,6 +588,7 @@ const quizGame = {
             if (!response.ok) throw new Error(data.error || 'Erreur');
 
             this.currentQuestion = data;
+            console.log('✅ Question loaded:', data.question);
 
             document.getElementById('quiz-question').textContent = data.question;
 
@@ -590,9 +605,15 @@ const quizGame = {
 
             document.getElementById('quiz-result').classList.add('hidden');
             document.getElementById('quiz-next-btn').classList.add('hidden');
+
+            // Hide loading, show content
+            document.getElementById('quiz-loading').classList.add('hidden');
+            document.getElementById('quiz-game-content').classList.remove('hidden');
+
+            console.log('✅ Quiz question displayed');
         } catch (error) {
-            console.error('Error loading question:', error);
-            alert('Erreur de chargement');
+            console.error('❌ Error loading question:', error);
+            document.getElementById('quiz-loading').textContent = 'Erreur: ' + error.message;
         }
     },
 
@@ -647,15 +668,39 @@ const quizGame = {
 };
 
 // ===== INITIALIZATION =====
-(async function init() {
+// Wait for DOM to be fully loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
+}
+
+async function initApp() {
     console.log('🎮 Initializing Single Page App...');
+
+    // First, ensure only menu is visible
+    document.querySelectorAll('.page').forEach(p => {
+        p.classList.remove('active');
+        console.log('Hiding:', p.id);
+    });
+
+    const menuPage = document.getElementById('menu-page');
+    if (menuPage) {
+        menuPage.classList.add('active');
+        console.log('✅ Menu page shown');
+    } else {
+        console.error('❌ Menu page not found!');
+    }
 
     // Load all game data
     await loadAllGameData();
 
-    // Handle initial route
+    // Handle initial route AFTER showing menu
     const hash = window.location.hash.slice(1);
-    if (hash) {
+    console.log('Initial hash:', hash);
+
+    if (hash && hash !== '') {
+        console.log('Navigating to hash:', hash);
         navigateTo(hash);
     }
 
@@ -670,4 +715,4 @@ const quizGame = {
     }
 
     console.log('✅ App initialized');
-})();
+}
