@@ -270,30 +270,41 @@ const flagGame = {
         });
 
         if (isCorrect) {
-            this.score += 10;
-            this.streak++;
-            if (this.streak > this.bestStreak) this.bestStreak = this.streak;
+        this.score += 10;
+        this.streak++;
+        if (this.streak > this.bestStreak) this.bestStreak = this.streak;
+    } else {
+        this.streak = 0;
+    }
+
+    document.getElementById('flag-score').textContent = this.score;
+
+    const resultDiv = document.getElementById('flag-result');
+    resultDiv.classList.remove('hidden');
+
+    if (isCorrect) {
+        resultDiv.textContent = '✅ Tu es la best! bravo!';
+        resultDiv.className = 'result correct';
+    } else {
+        resultDiv.textContent = `❌ Faux! C'était ${this.currentCorrectAnswer}`;
+        resultDiv.className = 'result wrong';
+    }
+
+    // Hide the next button (not needed anymore)
+    document.getElementById('flag-next-btn').classList.add('hidden');
+
+    this.questionNum++;
+
+    // Auto-advance after 2 seconds
+    setTimeout(() => {
+        if (this.questionNum >= this.maxQuestions) {
+            this.showGameOver();
         } else {
-            this.streak = 0;
+            document.getElementById('flag-question-num').textContent = this.questionNum + 1;
+            this.loadQuestion();
         }
-
-        document.getElementById('flag-score').textContent = this.score;
-
-        const resultDiv = document.getElementById('flag-result');
-        resultDiv.classList.remove('hidden');
-
-        if (isCorrect) {
-            resultDiv.textContent = '✅ Tu es la best! bravo!';
-            resultDiv.className = 'result correct';
-        } else {
-            resultDiv.textContent = `❌ Faux! C'était ${this.currentCorrectAnswer}`;
-            resultDiv.className = 'result wrong';
-        }
-
-        document.getElementById('flag-next-btn').classList.remove('hidden');
-        this.questionNum++;
-    },
-
+    }, 1000);
+},
     nextQuestion() {
         if (this.questionNum >= this.maxQuestions) {
             this.showGameOver();
@@ -816,8 +827,21 @@ const quizGame = {
         }
 
         resultDiv.classList.remove('hidden');
-        document.getElementById('quiz-next-btn').classList.remove('hidden');
+
+        // Hide the next button
+        document.getElementById('quiz-next-btn').classList.add('hidden');
+
         this.questionNum++;
+
+        // Auto-advance after 2 seconds
+        setTimeout(() => {
+            if (this.questionNum >= this.maxQuestions) {
+                this.showGameOver();
+            } else {
+                document.getElementById('quiz-question-num').textContent = this.questionNum + 1;
+                this.loadQuestion();
+            }
+        }, 1000);
     },
 
     nextQuestion() {
@@ -907,7 +931,6 @@ const piGame = {
             console.error('Error loading question:', error);
         }
     },
-
     checkAnswer(selected, btn) {
         const isCorrect = selected === this.currentQuestion.correct;
 
@@ -931,16 +954,15 @@ const piGame = {
             this.currentPosition++;
 
             if (this.currentPosition >= 1000) {
-                // Won the game!
-                setTimeout(() => this.gameOver(), 1500);
+                setTimeout(() => this.gameOver(), 1000);
             } else {
-                setTimeout(() => this.loadQuestion(), 1500);
+                setTimeout(() => this.loadQuestion(), 1000);
             }
         } else {
             resultDiv.textContent = `❌ Faux ! C'était ${this.currentQuestion.correct}`;
             resultDiv.className = 'result wrong';
 
-            setTimeout(() => this.gameOver(), 2000);
+            setTimeout(() => this.gameOver(), 1000);
         }
     },
 
