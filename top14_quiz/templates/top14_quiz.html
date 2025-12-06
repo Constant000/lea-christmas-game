@@ -4,6 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Top 14 2024-2025</title>
+    <div id="mode-indicator" style="text-align: center; padding: 5px 15px; background: #fbbf24; color: #78350f; border-radius: 20px; display: none; margin: 10px auto; max-width: 200px; font-size: 0.9rem; font-weight: bold;">
+    📡 Mode hors ligne
+    </div>
+
+    <script>
+        // Afficher l'indicateur si offline
+        function updateModeIndicator() {
+            const indicator = document.getElementById('mode-indicator');
+            if (!navigator.onLine) {
+                indicator.style.display = 'block';
+            } else {
+                indicator.style.display = 'none';
+            }
+        }
+
+        window.addEventListener('online', updateModeIndicator);
+        window.addEventListener('offline', updateModeIndicator);
+        updateModeIndicator();
+    </script>
     <script src="/static/game_results.js"></script>
     <style>
         * {

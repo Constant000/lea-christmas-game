@@ -76,6 +76,13 @@ def load_players():
     print(f"\n✓ Loaded {len(players_data)} players from Stade Toulousain\n")
     return players_data
 
+@toulouse_game_bp.route('/api/all-players')
+def get_all_players():
+    """Get all players data for offline mode."""
+    return jsonify({
+        'players': players_data,
+        'positions': list(POSITIONS.values())
+    })
 
 @toulouse_game_bp.route('/')
 def index():

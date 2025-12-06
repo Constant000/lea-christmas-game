@@ -4,6 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌍 Flag Comparison Game</title>
+    <div id="mode-indicator" style="text-align: center; padding: 5px 15px; background: #fbbf24; color: #78350f; border-radius: 20px; display: none; margin: 10px auto; max-width: 200px; font-size: 0.9rem; font-weight: bold;">
+    📡 Mode hors ligne
+    </div>
+
+    <script>
+        // Afficher l'indicateur si offline
+        function updateModeIndicator() {
+            const indicator = document.getElementById('mode-indicator');
+            if (!navigator.onLine) {
+                indicator.style.display = 'block';
+            } else {
+                indicator.style.display = 'none';
+            }
+        }
+
+        window.addEventListener('online', updateModeIndicator);
+        window.addEventListener('offline', updateModeIndicator);
+        updateModeIndicator();
+    </script>
     <script src="/static/game_results.js"></script>
     <style>
         * {
@@ -32,7 +51,6 @@
             position: relative;
         }
 
-        /* Responsive container */
         @media (max-width: 768px) {
             .container {
                 padding: 30px 20px;
@@ -68,7 +86,6 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
-        /* Responsive back button */
         @media (max-width: 480px) {
             .back-btn {
                 padding: 8px 12px;
@@ -90,7 +107,6 @@
             color: #667eea;
         }
 
-        /* Responsive header */
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 2rem;
@@ -124,7 +140,6 @@
             color: #667eea;
         }
 
-        /* Responsive stats */
         @media (max-width: 768px) {
             .stats {
                 gap: 20px;
@@ -147,7 +162,6 @@
             font-weight: bold;
         }
 
-        /* Responsive question */
         @media (max-width: 768px) {
             .question {
                 font-size: 1.4rem;
@@ -169,7 +183,6 @@
             margin-bottom: 20px;
         }
 
-        /* Responsive options - Grille symétrique sur mobile */
         @media (max-width: 768px) {
             .options {
                 gap: 15px;
@@ -198,7 +211,6 @@
             min-height: 200px;
         }
 
-        /* Responsive option card - Hauteur fixe pour symétrie */
         @media (max-width: 768px) {
             .option-card {
                 padding: 15px;
@@ -254,7 +266,6 @@
             margin-bottom: 15px;
         }
 
-        /* Responsive flag image - Taille fixe pour symétrie */
         @media (max-width: 768px) {
             .flag-image {
                 max-width: 150px;
@@ -280,7 +291,6 @@
             justify-content: center;
         }
 
-        /* Responsive country name */
         @media (max-width: 768px) {
             .country-name {
                 font-size: 1.1rem;
@@ -301,7 +311,6 @@
             color: #666;
         }
 
-        /* Responsive country value */
         @media (max-width: 768px) {
             .country-value {
                 font-size: 0.9rem;
@@ -343,7 +352,6 @@
             color: #ef4444;
         }
 
-        /* Responsive result message */
         @media (max-width: 480px) {
             .result-message {
                 font-size: 1.1rem;
@@ -369,7 +377,6 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
 
-        /* Responsive button */
         @media (max-width: 480px) {
             .next-btn {
                 padding: 12px 30px;
@@ -387,7 +394,6 @@
             margin-bottom: 20px;
         }
 
-        /* Responsive game over */
         @media (max-width: 768px) {
             .game-over h2 {
                 font-size: 2rem;
@@ -410,7 +416,6 @@
             font-weight: bold;
         }
 
-        /* Responsive final stats */
         @media (max-width: 480px) {
             .final-stats {
                 font-size: 1.2rem;
@@ -431,7 +436,6 @@
             display: block;
         }
 
-        /* Responsive result image */
         @media (max-width: 480px) {
             .result-image {
                 max-width: 100%;
@@ -446,13 +450,30 @@
             line-height: 1.6;
         }
 
-        /* Responsive game over message */
         @media (max-width: 480px) {
             .game-over .result-message {
                 font-size: 1rem;
                 margin: 15px 0;
             }
         }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.5em;
+            padding: 40px;
+        }
+        .country-flag-placeholder {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .country-flag-placeholder {
+                font-size: 3rem;
+                margin-bottom: 8px;
+            }
+}
     </style>
 </head>
 <body>
@@ -467,7 +488,9 @@
             </div>
         </div>
 
-        <div id="game-content">
+        <div id="loading" class="loading">Chargement des données...</div>
+
+        <div id="game-content" class="hidden">
             <div class="question" id="question-text">
                 Which country has the highest population?
             </div>
@@ -496,6 +519,7 @@
     </div>
 
     <script>
+        let allCountries = [];
         let score = 0;
         let streak = 0;
         let bestStreak = 0;
@@ -503,14 +527,91 @@
         let currentCorrectAnswer = '';
         let currentMetric = '';
         const maxQuestions = 10;
+        let isOffline = !navigator.onLine;
+
+        // Détecter les changements de connexion
+        window.addEventListener('online', () => {
+            isOffline = false;
+            console.log('✓ Mode en ligne');
+        });
+
+        window.addEventListener('offline', () => {
+            isOffline = true;
+            console.log('⚠️ Mode hors ligne - drapeaux désactivés');
+        });
+
+        // Charger toutes les données au démarrage
+        async function loadAllData() {
+            try {
+                const response = await fetch('/flag-game/api/all-countries');
+                const data = await response.json();
+                allCountries = data.countries;
+                console.log('✓ Loaded', allCountries.length, 'countries');
+
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('game-content').classList.remove('hidden');
+
+                loadQuestion();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                isOffline = true;
+                document.getElementById('loading').textContent = 'Mode hors ligne - Chargement des données locales...';
+
+                // En mode offline, essayer de charger depuis le cache
+                setTimeout(() => {
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('game-content').classList.remove('hidden');
+                    loadQuestion();
+                }, 1000);
+            }
+        }
+
+        function generateQuestion() {
+            if (allCountries.length < 4) {
+                return null;
+            }
+
+            const metrics = ['population', 'area', 'gdp', 'density'];
+            const metric = metrics[Math.floor(Math.random() * metrics.length)];
+
+            const validCountries = allCountries.filter(c => c[metric] > 0);
+
+            if (validCountries.length < 4) {
+                return null;
+            }
+
+            const shuffled = [...validCountries].sort(() => Math.random() - 0.5);
+            const selected = shuffled.slice(0, 4);
+
+            const sorted = [...selected].sort((a, b) => b[metric] - a[metric]);
+            const correct = sorted[0];
+
+            const questionTexts = {
+                'population': 'Allez ma loute, quel pays à la plus grande population ?',
+                'area': 'Quel pays a la plus grande superficie (en terrains de rugby) ?',
+                'gdp': 'Quel pays a le plus grand PIB ? (pas par habitant hein)',
+                'density': 'Quel pays a la plus grande densité de population ?'
+            };
+
+            return {
+                question: questionTexts[metric],
+                metric: metric,
+                options: selected.map(c => ({
+                    name: c.name,
+                    iso2: c.iso2,
+                    value: c[metric]
+                })),
+                correct_answer: correct.name
+            };
+        }
 
         function formatNumber(num, metric) {
             if (metric === 'population') {
                 return num.toLocaleString();
             } else if (metric === 'area') {
-                return num.toLocaleString() + ' terrains de rugby';
+                const rugbyFields = Math.round((num * 1000000) / 10000);
+                return rugbyFields.toLocaleString() + ' terrains de rugby';
             } else if (metric === 'gdp') {
-                // GDP is already in millions in the CSV
                 if (num >= 1000000) {
                     return '$' + (num / 1000000).toFixed(2) + 'T';
                 } else if (num >= 1000) {
@@ -524,13 +625,12 @@
             return num.toLocaleString();
         }
 
-        async function loadQuestion() {
+        function loadQuestion() {
             try {
-                const response = await fetch('/flag-game/api/question');
-                const data = await response.json();
+                const data = generateQuestion();
 
-                if (data.error) {
-                    alert('Error: ' + data.error);
+                if (!data) {
+                    alert('Error: Not enough data');
                     return;
                 }
 
@@ -547,11 +647,24 @@
                     card.className = 'option-card';
                     card.onclick = () => checkAnswer(option.name, card);
 
-                    card.innerHTML = `
-                        <img src="/flag-game/flags/${option.iso2}.png" alt="${option.name}" class="flag-image">
-                        <div class="country-name">${option.name}</div>
-                        <div class="country-value" data-value="${option.value}">???</div>
-                    `;
+                    // Mode offline : pas de drapeaux, juste le texte
+                    if (isOffline) {
+                        card.innerHTML = `
+                            <div class="country-flag-placeholder">🌍</div>
+                            <div class="country-name">${option.name}</div>
+                            <div class="country-value" data-value="${option.value}">???</div>
+                        `;
+                    } else {
+                        card.innerHTML = `
+                            <img src="/flag-game/flags/${option.iso2}.png"
+                                 alt="${option.name}"
+                                 class="flag-image"
+                                 onerror="this.style.display='none'; this.parentElement.querySelector('.country-flag-placeholder').style.display='block';">
+                            <div class="country-flag-placeholder" style="display: none;">🌍</div>
+                            <div class="country-name">${option.name}</div>
+                            <div class="country-value" data-value="${option.value}">???</div>
+                        `;
+                    }
 
                     optionsContainer.appendChild(card);
                 });
@@ -567,7 +680,6 @@
         function checkAnswer(selectedAnswer, selectedCard) {
             const isCorrect = selectedAnswer === currentCorrectAnswer;
 
-            // Disable all cards and reveal values
             const cards = document.querySelectorAll('.option-card');
             cards.forEach(card => {
                 card.classList.add('disabled');
@@ -586,7 +698,6 @@
                 }
             });
 
-            // Update score and streak
             if (isCorrect) {
                 score += 10;
                 streak++;
@@ -597,10 +708,8 @@
                 streak = 0;
             }
 
-            // Update display
             document.getElementById('score').textContent = score;
 
-            // Show result
             const resultDiv = document.getElementById('result');
             const resultMessage = document.getElementById('result-message');
             resultDiv.classList.remove('hidden');
@@ -609,7 +718,7 @@
                 resultMessage.textContent = '✅ Tu es la best! bravo!';
                 resultMessage.className = 'result-message correct';
             } else {
-                resultMessage.textContent = `❌ Faux! C'était ${currentCorrectAnswer} `;
+                resultMessage.textContent = `❌ Faux! C'était ${currentCorrectAnswer}`;
                 resultMessage.className = 'result-message wrong';
             }
 
@@ -629,10 +738,8 @@
             document.getElementById('game-content').classList.add('hidden');
             document.getElementById('game-over').classList.remove('hidden');
 
-            // Convertir le score en score sur 10
             const scoreOutOf10 = score / 10;
 
-            // Utiliser la fonction partagée
             displayGameResults(scoreOutOf10, 'geography', {
                 resultImg: document.getElementById('result-img'),
                 resultMsg: document.getElementById('result-msg'),
@@ -653,13 +760,13 @@
             document.getElementById('question-num').textContent = 1;
 
             document.getElementById('game-content').classList.remove('hidden');
-            document.getElementById('game-over').classList.add('hidden');
+            document.getElementById('game-over').classList.remove('hidden');
 
             loadQuestion();
         }
 
-        // Load first question on page load
-        loadQuestion();
+        // Charger les données au démarrage
+        loadAllData();
     </script>
 </body>
 </html>
