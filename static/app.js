@@ -822,8 +822,6 @@ const quizGame = {
 const piGame = {
     initialized: false,
     currentPosition: 0,
-    startTime: null,
-    timerInterval: null,
     currentQuestion: null,
 
     async init() {
@@ -833,22 +831,11 @@ const piGame = {
 
     restart() {
         this.currentPosition = 0;
-        this.startTime = Date.now();
 
         document.getElementById('pi-game-content').classList.remove('hidden');
         document.getElementById('pi-game-over').classList.add('hidden');
 
-        this.startTimer();
         this.loadQuestion();
-    },
-
-    startTimer() {
-        if (this.timerInterval) clearInterval(this.timerInterval);
-
-        this.timerInterval = setInterval(() => {
-            const elapsed = ((Date.now() - this.startTime) / 1000).toFixed(1);
-            document.getElementById('pi-timer').textContent = elapsed + 's';
-        }, 100);
     },
 
     async loadQuestion() {
@@ -924,7 +911,6 @@ const piGame = {
         document.getElementById('pi-game-over').classList.remove('hidden');
 
         document.getElementById('pi-final-position').textContent = this.currentPosition;
-        document.getElementById('pi-final-time').textContent = finalTime;
     },
 
     async submitScore() {
@@ -934,8 +920,6 @@ const piGame = {
             return;
         }
 
-        const finalTime = ((Date.now() - this.startTime) / 1000);
-
         try {
             const response = await fetch('/pi-game/api/submit-score', {
                 method: 'POST',
@@ -943,7 +927,6 @@ const piGame = {
                 body: JSON.stringify({
                     name: name,
                     position: this.currentPosition,
-                    time: finalTime
                 })
             });
 
@@ -976,7 +959,6 @@ const piGame = {
                         <th>Rang</th>
                         <th>Nom</th>
                         <th>Position</th>
-                        <th>Temps</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -985,7 +967,6 @@ const piGame = {
                             <td>${index + 1}</td>
                             <td>${entry.name}</td>
                             <td>${entry.position}/1000</td>
-                            <td>${entry.time.toFixed(1)}s</td>
                         </tr>
                     `).join('')}
                 </tbody>
