@@ -321,7 +321,7 @@
             gameContentEl.classList.add('hidden');
 
             try {
-                const response = await fetch('/toulouse/api/question');
+                const response = await fetch('/toulouse-game/api/question');
                 const data = await response.json();
 
                 if (!response.ok) {
@@ -332,7 +332,7 @@
                 selectedName = null;
                 selectedPosition = null;
 
-                playerImg.src = `/toulouse/players/${data.image}`;
+                playerImg.src = `/toulouse-game/players/${data.image}`;
 
                 // Create name options
                 nameOptionsEl.innerHTML = '';
