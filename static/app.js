@@ -251,6 +251,12 @@ const flagGame = {
         console.log('🎯 Flag game - loading question');
         console.log('🎯 Countries available:', gameData.countries.length);
 
+        // Remove flag display from previous question if it exists
+        const existingFlag = document.getElementById('flag-to-guess');
+        if (existingFlag) {
+            existingFlag.remove();
+        }
+
         const questionData = this.generateQuestion();
         console.log('🎯 Generated question:', questionData);
 
@@ -277,12 +283,8 @@ const flagGame = {
                      alt="Drapeau à deviner" 
                      style="max-width: 300px; height: auto; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
             `;
-            document.getElementById('flag-question').after(flagDisplay);
             flagDisplay.id = 'flag-to-guess';
-        } else {
-            // Remove flag display if it exists
-            const existingFlag = document.getElementById('flag-to-guess');
-            if (existingFlag) existingFlag.remove();
+            document.getElementById('flag-question').after(flagDisplay);
         }
 
         questionData.options.forEach(option => {
