@@ -11,7 +11,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="L&C Games">
+    <meta name="apple-mobile-web-app-title" content="TREIX Games">
 
     <style>
         * {
@@ -23,12 +23,11 @@
         html, body {
             font-family: Arial, sans-serif;
             height: 100%;
-            overflow: hidden; /* Prevent body scroll */
+            overflow: hidden;
         }
 
-        /* Hide all pages by default */
         .page {
-            display: none !important; /* Force hide */
+            display: none !important;
             position: fixed;
             top: 0;
             left: 0;
@@ -40,15 +39,14 @@
         }
 
         .page.active {
-            display: block !important; /* Force show */
+            display: block !important;
             z-index: 10;
         }
 
-        /* ===== GAME PAGE COMMON STYLES ===== */
         .game-page.active {
-            display: flex !important; /* Flex layout only when active */
+            display: flex !important;
         }
-        /* Offline indicator */
+
         .offline-indicator {
             position: fixed;
             top: 10px;
@@ -67,23 +65,13 @@
             display: block;
         }
 
-        /* ===== MENU PAGE STYLES ===== */
+        /* ===== MENU PAGE ===== */
         #menu-page {
-            background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)),
                         url('/static/background.png');
             background-size: cover;
             background-position: center top;
-            background-attachment: scroll; /* Change de fixed à scroll */
-        }
-
-        .scroll-wrapper {
-            min-height: 120vh; /* Augmente de 100vh à 120vh pour forcer le scroll */
-            padding: 20px;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            padding-top: 10vh;
-            padding-bottom: 30vh;
+            background-attachment: scroll;
         }
 
         .scroll-wrapper {
@@ -92,33 +80,66 @@
             display: flex;
             align-items: flex-start;
             justify-content: center;
-            padding-top: 10vh;
+            padding-top: 8vh;
             padding-bottom: 50vh;
         }
 
         .menu-container {
             max-width: 1400px;
             width: 100%;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .header {
             text-align: center;
-            color: white;
-            margin-bottom: 25px;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 15px;
+            color: #FFD700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, rgba(139, 0, 139, 0.8) 0%, rgba(0, 0, 139, 0.8) 100%);
+            padding: 30px 20px;
             border-radius: 15px;
             backdrop-filter: blur(10px);
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(255, 215, 0, 0.1);
+            border: 3px solid #FFD700;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 8px;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+            text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.5), 0 0 20px #FFD700;
+            animation: glow-arcade 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow-arcade {
+            from {
+                text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.5), 0 0 20px #FFD700;
+            }
+            to {
+                text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.5), 0 0 30px #FFD700, 0 0 40px #FFD700;
+            }
         }
 
         .header p {
-            font-size: 1.3rem;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 3px;
             opacity: 0.95;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
@@ -126,45 +147,71 @@
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            gap: 25px;
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        .game-card {
-            background: lightskyblue;
-            border-radius: 15px;
+        .game-card, .game-card-ranked {
+            position: relative;
+            border-radius: 20px;
             padding: 25px 20px;
             text-align: center;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
             backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .game-card::before, .game-card-ranked::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+
+        .game-card:hover::before, .game-card-ranked:hover::before {
+            opacity: 1;
+        }
+
+        .game-card {
+            background: linear-gradient(135deg, rgba(135, 206, 250, 0.95) 0%, rgba(70, 130, 180, 0.95) 100%);
         }
 
         .game-card-ranked {
-            background: gold;
-            border-radius: 15px;
-            padding: 25px 20px;
-            text-align: center;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+            animation: shimmer 3s ease-in-out infinite;
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.5);
+        }
+
+        @keyframes shimmer {
+            0%, 100% {
+                box-shadow: 0 10px 40px rgba(255, 215, 0, 0.5);
+            }
+            50% {
+                box-shadow: 0 15px 50px rgba(255, 215, 0, 0.8);
+            }
+        }
+
+        .game-card:hover, .game-card-ranked:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         }
 
         .game-card-ranked:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
-        }
-
-        .game-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.7);
         }
 
         .game-card.rugby {
-            background: linear-gradient(135deg, rgba(200, 16, 46, 0.95) 0%, rgba(0, 0, 0, 0.95) 100%);
+            background: linear-gradient(135deg, rgba(200, 16, 46, 0.95) 0%, rgba(139, 0, 0, 0.95) 100%);
             color: white;
         }
 
@@ -176,29 +223,131 @@
         .game-icon {
             font-size: 3.5rem;
             margin-bottom: 12px;
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .game-card:hover .game-icon, .game-card-ranked:hover .game-icon {
+            animation: none;
+            transform: scale(1.2) rotate(5deg);
         }
 
         .game-title {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: bold;
             margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .game-description {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             line-height: 1.5;
             opacity: 0.9;
         }
 
-        /* ===== GAME PAGE COMMON STYLES ===== */
+        /* Message de Noël */
+        .christmas-message-sketchy {
+            position: fixed;
+            padding: 12px 20px;
+            background: white;
+            color: #c41e3a;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: 3px solid #c41e3a;
+            border-radius: 5px;
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3);
+            transform: rotate(-5deg);
+            z-index: 100;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            animation: float-random 3s ease-in-out infinite;
+            top: 15%;
+            right: 5%;
+        }
+
+        @keyframes float-random {
+            0%, 100% {
+                transform: rotate(-5deg) translateY(0px);
+            }
+            25% {
+                transform: rotate(3deg) translateY(-10px);
+            }
+            50% {
+                transform: rotate(-2deg) translateY(5px);
+            }
+            75% {
+                transform: rotate(4deg) translateY(-5px);
+            }
+        }
+
+        .offline-indicator-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            box-shadow: 0 3px 10px rgba(16, 185, 129, 0.5);
+            cursor: help;
+            transition: all 0.3s;
+            animation: pulse-badge 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-badge {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 3px 10px rgba(16, 185, 129, 0.5);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 5px 15px rgba(16, 185, 129, 0.8);
+            }
+        }
+
+        .offline-indicator-badge:hover {
+            transform: scale(1.3);
+            animation: none;
+        }
+
+        .offline-indicator-badge::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -35px;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .offline-indicator-badge:hover::after {
+            opacity: 1;
+        }
+
+        /* ===== GAME PAGE COMMON ===== */
         .game-page {
             justify-content: center;
             align-items: center;
             padding: 20px;
-        }
-
-        .game-page.active {
-            display: flex !important;
         }
 
         .game-container {
@@ -216,19 +365,27 @@
             position: absolute;
             top: 20px;
             left: 20px;
-            padding: 10px 20px;
-            background: #666;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 1em;
-            transition: all 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .back-btn:hover {
-            background: #444;
+            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
             transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .game-header {
@@ -269,7 +426,179 @@
             padding: 40px;
         }
 
-        /* ===== FLAG GAME STYLES ===== */
+        /* Options cards */
+        .option-card {
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            text-align: center;
+            min-height: 280px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .option-card:hover:not(.disabled) {
+            background: #f0f0ff;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .option-card.disabled {
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .option-card.correct {
+            background: #10b981 !important;
+            border-color: #10b981 !important;
+            color: white !important;
+        }
+
+        .option-card.wrong {
+            background: #ef4444 !important;
+            border-color: #ef4444 !important;
+            color: white !important;
+        }
+
+        .option-card.correct .country-name,
+        .option-card.correct .country-value {
+            color: white !important;
+        }
+
+        .option-card.wrong .country-name,
+        .option-card.wrong .country-value {
+            color: white !important;
+        }
+
+        .flag-image {
+            width: 100%;
+            max-width: 200px;
+            height: 133px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 15px;
+            background: #f0f0f0;
+            flex-shrink: 0;
+        }
+
+        .country-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            min-height: 2.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .country-value {
+            font-size: 1rem;
+            color: #666;
+            min-height: 1.5rem;
+        }
+
+        .country-value.revealed {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .option-card.correct .country-value.revealed,
+        .option-card.wrong .country-value.revealed {
+            color: white !important;
+        }
+
+        /* Buttons */
+        .option-btn {
+            padding: 16px 24px;
+            font-size: 1.1em;
+            border: 2px solid #c8102e;
+            background: white;
+            color: #c8102e;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #c8102e;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(200, 16, 46, 0.3);
+        }
+
+        .option-btn:active:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(200, 16, 46, 0.2);
+        }
+
+        .option-btn.correct {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .option-btn.wrong {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .next-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 16px 48px;
+            font-size: 1.2em;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .next-btn:active {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        #flag-game-page .next-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        #toulouse-game-page .next-btn {
+            background: linear-gradient(135deg, #c8102e 0%, #8b0000 100%);
+        }
+
+        #top14-quiz-page .next-btn {
+            background: linear-gradient(135deg, #003d7a 0%, #00a651 100%);
+        }
+
+        #pi-game-page .next-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* FLAG GAME */
         #flag-game-page {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
@@ -289,7 +618,7 @@
             margin-bottom: 20px;
         }
 
-        /* ===== TOULOUSE GAME STYLES ===== */
+        /* TOULOUSE GAME */
         #toulouse-game-page {
             background: linear-gradient(135deg, #c8102e 0%, #000000 100%);
         }
@@ -331,41 +660,17 @@
             gap: 15px;
         }
 
-        .option-btn {
-            padding: 15px 20px;
-            font-size: 1.1em;
-            border: 2px solid #c8102e;
-            background: white;
+        #toulouse-game-page .option-btn {
+            border-color: #c8102e;
             color: #c8102e;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
         }
 
-        .option-btn:hover:not(:disabled) {
+        #toulouse-game-page .option-btn:hover:not(:disabled) {
             background: #c8102e;
             color: white;
-            transform: translateY(-2px);
         }
 
-        .option-btn.correct {
-            background: #28a745;
-            color: white;
-            border-color: #28a745;
-        }
-
-        .option-btn.wrong {
-            background: #dc3545;
-            color: white;
-            border-color: #dc3545;
-        }
-
-        .option-btn:disabled {
-            cursor: not-allowed;
-        }
-
-        /* ===== TOP14 QUIZ STYLES ===== */
+        /* TOP14 QUIZ */
         #top14-quiz-page {
             background: linear-gradient(135deg, #003d7a 0%, #00a651 100%);
         }
@@ -403,17 +708,13 @@
             color: white;
         }
 
-        /* ===== PI GAME STYLES ===== */
+        /* PI GAME */
         #pi-game-page {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         #pi-game-page .game-header h1 {
             color: #667eea;
-        }
-
-        .pi-display #pi-next {
-            animation: pulse 1s infinite;
         }
 
         @keyframes pulse {
@@ -433,6 +734,13 @@
             font-size: 2rem;
             font-weight: bold;
             font-family: 'Courier New', monospace;
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        #pi-options .option-btn:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
         }
 
         #pi-player-name {
@@ -446,7 +754,7 @@
             display: block;
         }
 
-        /* ===== COMMON RESULT STYLES ===== */
+        /* RESULTS */
         .result {
             text-align: center;
             margin: 30px 0;
@@ -464,35 +772,6 @@
         .result.wrong {
             background: #f8d7da;
             color: #721c24;
-        }
-
-        .next-btn {
-            display: block;
-            margin: 20px auto;
-            padding: 15px 40px;
-            font-size: 1.2em;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-        }
-
-        .next-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        #flag-game-page .next-btn {
-            background: #667eea;
-        }
-
-        #toulouse-game-page .next-btn {
-            background: #c8102e;
-        }
-
-        #top14-quiz-page .next-btn {
-            background: #003d7a;
         }
 
         .game-over {
@@ -530,115 +809,6 @@
             font-weight: bold;
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .header h1 { font-size: 1.8rem; }
-            .header p { font-size: 1rem; }
-            .games-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .game-card { padding: 15px 10px; }
-            .game-icon { font-size: 2.5rem; }
-            .game-title { font-size: 1.1rem; }
-            .game-description { font-size: 0.75rem; }
-            .game-container { padding: 30px 20px; }
-            .game-header h1 { font-size: 2rem; }
-        }
-
-        @media (max-width: 480px) {
-            .header h1 { font-size: 1.3rem; }
-            .header p { font-size: 0.85rem; }
-            .games-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .game-card { padding: 12px 8px; }
-            .game-icon { font-size: 2rem; }
-            .game-title { font-size: 0.95rem; }
-            .game-description { display: none; }
-            .game-container { padding: 20px 15px; }
-            .game-header h1 { font-size: 1.5rem; }
-            .back-btn { padding: 8px 12px; font-size: 0.9em; }
-        }
-
-        /* ABSOLUTE FORCE - HIDE ALL NON-ACTIVE PAGES */
-        .page {
-            display: none !important;
-        }
-
-        .page.active {
-            display: block !important;
-        }
-
-        .page.game-page {
-            display: none !important;
-        }
-
-        .page.game-page.active {
-            display: flex !important;
-        }
-
-        /* Extra safety - force hide by ID */
-        #flag-game-page { display: none !important; }
-        #toulouse-game-page { display: none !important; }
-        #top14-quiz-page { display: none !important; }
-
-        #menu-page.active { display: block !important; }
-        #flag-game-page.active { display: flex !important; }
-        #toulouse-game-page.active { display: flex !important; }
-        #top14-quiz-page.active { display: flex !important; }
-
-        .offline-indicator-badge {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 24px;
-            height: 24px;
-            background: rgba(16, 185, 129, 0.9);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            cursor: help;
-            transition: transform 0.2s;
-        }
-
-        .offline-indicator-badge:hover {
-            transform: scale(1.2);
-        }
-
-        .offline-indicator-badge::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: -30px;
-            right: 0;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
-        }
-
-        .offline-indicator-badge:hover::after {
-            opacity: 1;
-        }
-        .flag-image {
-            width: 100%;
-            max-width: 200px;
-            height: auto;
-            aspect-ratio: 3/2;
-            object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-            margin-bottom: 15px;
-            background: #f0f0f0; /* Fond gris si l'image ne charge pas */
-        }
-
-        /* Style pour les images cassées */
-        .flag-image[src=""] {
-            display: none;
-        }
         .leaderboard-table {
             width: 100%;
             margin: 20px 0;
@@ -662,119 +832,155 @@
             background: #f5f5f5;
         }
 
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.2rem; }
+            .header p { font-size: 0.9rem; }
+            .games-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            .game-card, .game-card-ranked {
+                padding: 20px 15px;
+                min-height: 200px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+            .game-icon {
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+            }
+            .game-title {
+                font-size: 1.1rem;
+                min-height: 2.5rem;
+            }
+            .game-description {
+                font-size: 0.8rem;
+                flex-grow: 1;
+            }
+            .christmas-message-sketchy {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+                animation: float-random 2s ease-in-out infinite;
+                top: auto;
+                bottom: 15px;
+                right: 10px;
+                left: 10px;
+                margin: 0 auto;
+                max-width: 250px;
+            }
+            .game-container { padding: 30px 20px; }
+            .game-header h1 { font-size: 2rem; }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.6rem; }
+            .header p { font-size: 0.75rem; letter-spacing: 1px; }
+            .header { padding: 20px 15px; }
+            .games-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .game-card, .game-card-ranked {
+                padding: 15px 10px;
+                min-height: 180px;
+            }
+            .game-icon {
+                font-size: 2.2rem;
+                margin-bottom: 8px;
+            }
+            .game-title {
+                font-size: 0.95rem;
+                min-height: 2.2rem;
+            }
+            .game-description {
+                font-size: 0.7rem;
+                line-height: 1.3;
+            }
+            .christmas-message-sketchy {
+                font-size: 0.75rem;
+                padding: 6px 10px;
+                border: 2px solid #c41e3a;
+                animation: float-random 1.5s ease-in-out infinite;
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: 200px;
+                display: block !important;
+            }
+            .game-container { padding: 20px 15px; }
+            .game-header h1 { font-size: 1.5rem; }
+            .back-btn { padding: 8px 16px; font-size: 0.9em; }
+        }
+
+        /* FORCE HIDE */
+        .page {
+            display: none !important;
+        }
+
+        .page.active {
+            display: block !important;
+        }
+
+        .page.game-page {
+            display: none !important;
+        }
+
+        .page.game-page.active {
+            display: flex !important;
+        }
+
+        #flag-game-page { display: none !important; }
+        #toulouse-game-page { display: none !important; }
+        #top14-quiz-page { display: none !important; }
+        #pi-game-page { display: none !important; }
+
+        #menu-page.active { display: block !important; }
+        #flag-game-page.active { display: flex !important; }
+        #toulouse-game-page.active { display: flex !important; }
+        #top14-quiz-page.active { display: flex !important; }
+        #pi-game-page.active { display: flex !important; }
+
         #flag-player-name {
-            padding: 10px;
+            padding: 14px 20px;
             font-size: 1.1rem;
-            border: 2px solid #667eea;
-            border-radius: 8px;
-            margin: 10px 0;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        options-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .option-card {
-            border: 3px solid #667eea;
-            border-radius: 15px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
-            text-align: center;
-            min-height: 280px; /* Hauteur minimale fixe */
-            height: 100%; /* Prend toute la hauteur disponible */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .flag-image {
-            width: 100%;
-            max-width: 200px;
-            height: 133px; /* Hauteur fixe (ratio 3:2) */
-            object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-            margin-bottom: 15px;
-            background: #f0f0f0;
-            flex-shrink: 0; /* Empêche l'image de rétrécir */
-        }
-
-        .country-name {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-            min-height: 2.6rem; /* Réserve l'espace pour 2 lignes */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .country-value {
-            font-size: 1rem;
-            color: #666;
-            min-height: 1.5rem; /* Hauteur minimale pour la valeur */
-        }
-
-        next-btn {
-            display: block;
+            border: 2px solid #ddd;
+            border-radius: 12px;
             margin: 20px auto;
-            padding: 15px 40px;
-            font-size: 1.2em;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-            background: #667eea; /* Couleur par défaut */
+            width: 100%;
+            max-width: 350px;
+            display: block;
+            transition: all 0.3s ease;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .next-btn:hover {
-            background: #5568d3; /* Plus foncé au survol */
+        #flag-player-name:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2), 0 4px 12px rgba(102, 126, 234, 0.3);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .next-btn:active {
-            background: #4557c2; /* Encore plus foncé au clic */
-            transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-        }
-
-        /* Pour le jeu de Pi spécifiquement */
-        #pi-game-page .next-btn {
-            background: #667eea;
-        }
-
-        #pi-game-page .next-btn:hover {
-            background: #5568d3;
-        }
-
-        #pi-game-page .next-btn:active {
-            background: #4557c2;
+        #flag-player-name::placeholder {
+            color: #999;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
-    <!-- Offline Indicator -->
     <div class="offline-indicator" id="offline-indicator">📡 Mode hors ligne</div>
 
-    <!-- ===== MENU PAGE ===== -->
     <div id="menu-page" class="page active">
         <div class="scroll-wrapper">
             <div class="menu-container">
                 <div class="header">
-                    <h1>🎮❤️ Jeu de Léa&Constant ❤️🎮</h1>
-                    <p>On va voir qui est le meilleur !</p>
+                    <h1>🕹️ TREIX ARCADE 🕹️</h1>
+                    <p>INSERT COIN TO PLAY</p>
                 </div>
+
+                <div class="christmas-message-sketchy">🎄 Joyeux Noël Léa ! 🎁</div>
 
                 <div class="games-grid">
                     <div class="game-card" onclick="navigateTo('flag-game')">
@@ -803,6 +1009,7 @@
                             Teste tes connaissances sur la saison 2024-2025 !
                         </div>
                     </div>
+
                     <div class="game-card-ranked" onclick="navigateTo('flag-game'); flagGame.restart(true);">
                         <div class="game-icon">🏆</div>
                         <div class="game-title">Géographie - Ranked</div>
@@ -810,6 +1017,7 @@
                             Mode compétitif avec classement !
                         </div>
                     </div>
+
                     <div class="game-card-ranked" onclick="navigateTo('pi-game')">
                         <div class="game-icon">🥧</div>
                         <div class="game-title">Jeu de Pi - Ranked</div>
@@ -822,7 +1030,7 @@
         </div>
     </div>
 
-    <!-- ===== FLAG GAME PAGE ===== -->
+<!-- ===== FLAG GAME PAGE ===== -->
     <div id="flag-game-page" class="page game-page">
         <div class="game-container">
             <button class="back-btn" onclick="navigateTo('menu')">← Menu</button>
@@ -855,16 +1063,13 @@
                     <p class="final-score">Score final: <span id="flag-final-score">0</span> / 10</p>
                     <p>Meilleure série: <span id="flag-best-streak">0</span> 🔥</p>
                     <p>Précision: <span id="flag-accuracy">0</span>%</p>
-                    <p id="flag-time-container" class="hidden">⏱️ Temps: <span id="flag-time">0</span></p>
                 </div>
 
-                <!-- Leaderboard submission -->
                 <div id="flag-leaderboard-submit" class="hidden">
                     <input type="text" id="flag-player-name" placeholder="Entre ton nom" maxlength="20">
                     <button class="next-btn" onclick="flagGame.submitToLeaderboard()">Enregistrer mon score</button>
                 </div>
 
-                <!-- Leaderboard display -->
                 <div id="flag-leaderboard" class="hidden"></div>
 
                 <button class="next-btn" onclick="flagGame.restart(flagGame.rankedMode)">Rejouer</button>
@@ -880,7 +1085,7 @@
 
             <div class="game-header">
                 <h1>🏉 Qui est ce ? Stade Toulousain</h1>
-                <p class="subtitle"> On va voir les vrais fan des rouges et noirs!</p>
+                <p class="subtitle">On va voir les vrais fans des rouges et noirs!</p>
             </div>
 
             <div class="score">
@@ -961,7 +1166,7 @@
         </div>
     </div>
 
-        <!-- ===== PI GAME PAGE ===== -->
+    <!-- ===== PI GAME PAGE ===== -->
     <div id="pi-game-page" class="page game-page">
         <div class="game-container">
             <button class="back-btn" onclick="navigateTo('menu')">← Menu</button>
@@ -972,14 +1177,15 @@
             </div>
 
             <div id="pi-game-content">
-                <div class="stats" style="display: flex; justify-content: space-around; margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                <div class="stats" style="display: flex; justify-content: center; margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
                     <div class="stat" style="text-align: center;">
                         <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">Position</div>
                         <div style="font-size: 1.8rem; font-weight: bold; color: #667eea;" id="pi-position">0</div>
                     </div>
-                    <div class="pi-display" style="background: #f0f0f0; padding: 20px; border-radius: 10px; margin-bottom: 30px; text-align: center; font-size: 1.5rem; font-family: 'Courier New', monospace; letter-spacing: 2px; word-break: break-all;">
-                        <span style="color: #999;" id="pi-previous-digits"></span><span style="color: #667eea; font-weight: bold;">?</span>
-                    </div>
+                </div>
+
+                <div class="pi-display" style="background: #f0f0f0; padding: 20px; border-radius: 10px; margin-bottom: 30px; text-align: center; font-size: 1.5rem; font-family: 'Courier New', monospace; letter-spacing: 2px; word-break: break-all;">
+                    3.<span style="color: #999;" id="pi-previous-digits"></span><span style="color: #667eea; font-weight: bold;">?</span>
                 </div>
 
                 <p class="question-text" style="text-align: center; font-size: 1.3rem; margin-bottom: 20px; color: #333;">Quelle est la prochaine décimale ?</p>

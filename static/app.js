@@ -115,7 +115,6 @@ async function loadAllGameData() {
 
     console.log('✅ All game data loaded');
 }
-
 // ===== FLAG GAME =====
 const flagGame = {
     initialized: false,
@@ -126,9 +125,9 @@ const flagGame = {
     currentCorrectAnswer: '',
     currentMetric: '',
     maxQuestions: 10,
-    startTime: null,  // ADD THIS
-    endTime: null,    // ADD THIS
     rankedMode: false,
+    startTime: null,
+    endTime: null,
 
     async init() {
         this.initialized = true;
@@ -136,6 +135,7 @@ const flagGame = {
     },
 
     restart(ranked = false) {
+        console.log('🔄 Restarting flag game, ranked:', ranked);
         this.score = 0;
         this.streak = 0;
         this.bestStreak = 0;
@@ -168,7 +168,7 @@ const flagGame = {
 
         const questionTexts = {
             'population': 'Allez ma loute, quel pays à la plus grande population ?',
-            'area': 'Quel pays a la plus grande superficie ?',
+            'area': 'Quel pays a la plus grande superficie (en terrains de rugby) ?',
             'gdp': 'Quel pays a le plus grand PIB ? (pas par habitant hein)',
             'density': 'Quel pays a la plus grande densité de population ?'
         };
@@ -240,7 +240,6 @@ const flagGame = {
         document.getElementById('flag-result').classList.add('hidden');
         document.getElementById('flag-next-btn').classList.add('hidden');
 
-        // Hide loading, show content
         document.getElementById('flag-loading').classList.add('hidden');
         document.getElementById('flag-game-content').classList.remove('hidden');
 
@@ -255,7 +254,7 @@ const flagGame = {
             card.classList.add('disabled');
 
             const countryNameElement = card.querySelector('.country-name');
-            if (!countryNameElement) return; // Skip if element doesn't exist
+            if (!countryNameElement) return;
             const countryName = countryNameElement.textContent;
             const valueDiv = card.querySelector('.country-value');
             const value = parseInt(valueDiv.dataset.value);
@@ -305,25 +304,41 @@ const flagGame = {
     },
 
     showGameOver() {
+        console.log('🏁 Game Over - rankedMode:', this.rankedMode);
+
         document.getElementById('flag-game-content').classList.add('hidden');
         document.getElementById('flag-game-over').classList.remove('hidden');
 
         const scoreOutOf10 = this.score / 10;
 
-        if (this.rankedMode) {
+        // Calculate and show time if ranked
+        if (this.rankedMode && this.startTime) {
             this.endTime = Date.now();
             const timeInSeconds = ((this.endTime - this.startTime) / 1000).toFixed(1);
 
-            // Show time
-            document.getElementById('flag-time').textContent = timeInSeconds + 's';
-            document.getElementById('flag-time-container').classList.remove('hidden');
-
-            // Show name input for leaderboard
-            document.getElementById('flag-leaderboard-submit').classList.remove('hidden');
-
+            const timeContainer = document.getElementById('flag-time-container');
+            const timeSpan = document.getElementById('flag-time');
+            if (timeContainer && timeSpan) {
+                timeSpan.textContent = timeInSeconds + 's';
+                timeContainer.classList.remove('hidden');
+            }
         } else {
-            document.getElementById('flag-time-container').classList.add('hidden');
-            document.getElementById('flag-leaderboard-submit').classList.add('hidden');
+            const timeContainer = document.getElementById('flag-time-container');
+            if (timeContainer) {
+                timeContainer.classList.add('hidden');
+            }
+        }
+
+        // Show/hide ranked elements
+        const submitSection = document.getElementById('flag-leaderboard-submit');
+        console.log('🔍 Submit section found:', !!submitSection);
+
+        if (this.rankedMode && submitSection) {
+            console.log('✅ Showing leaderboard submit');
+            submitSection.classList.remove('hidden');
+        } else if (submitSection) {
+            console.log('⚠️ Not ranked mode, hiding submit');
+            submitSection.classList.add('hidden');
         }
 
         displayGameResults(scoreOutOf10, 'geography', {
