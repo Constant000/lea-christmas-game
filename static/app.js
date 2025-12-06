@@ -220,7 +220,7 @@ const flagGame = {
             card.innerHTML = `
                 <img src="https://flagcdn.com/w320/${option.iso2.toLowerCase()}.png" 
                      alt="${option.name}" 
-                     class="flag-image"
+                     class="flag-image">
                 <div class="country-name">${option.name}</div>
                 <div class="country-value" data-value="${option.value}">???</div>
             `;
@@ -245,7 +245,9 @@ const flagGame = {
         cards.forEach(card => {
             card.classList.add('disabled');
 
-            const countryName = card.querySelector('.country-name').textContent;
+            const countryNameElement = card.querySelector('.country-name');
+            if (!countryNameElement) return; // Skip if element doesn't exist
+            const countryName = countryNameElement.textContent;
             const valueDiv = card.querySelector('.country-value');
             const value = parseInt(valueDiv.dataset.value);
 
@@ -386,7 +388,17 @@ const toulouseGame = {
 
         if (this.currentQuestion.offline_mode) {
             playerImageDiv.style.display = 'none';
-            nameSection.style.display = 'none';
+            nameSection.style.display = 'block';
+
+            // Show player name in offline mode
+            const nameOptions = document.getElementById('toulouse-name-options');
+            nameOptions.innerHTML = `
+                <div style="text-align: center; padding: 20px; background: #f0f0f0; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: #c8102e; font-size: 1.5rem; margin: 0;">
+                        ${this.currentQuestion.player.name}
+                    </h3>
+                </div>
+            `;
         } else {
             playerImageDiv.style.display = 'block';
             nameSection.style.display = 'block';
@@ -453,6 +465,13 @@ const toulouseGame = {
     },
 
     checkAnswer() {
+        console.log('🔍 checkAnswer called');
+        console.log('🔍 offline_mode:', this.currentQuestion.offline_mode);
+        console.log('🔍 selectedPosition:', this.selectedPosition);
+        console.log('🔍 selectedName:', this.selectedName);
+        console.log('🔍 correct position:', this.currentQuestion.player.position);
+
+        // OFFLINE MODE - Only position question
         if (this.currentQuestion.offline_mode) {
             if (this.selectedPosition === null) return;
 
@@ -483,6 +502,7 @@ const toulouseGame = {
             return;
         }
 
+        // ONLINE MODE - Name AND position questions
         if (this.selectedName === null || this.selectedPosition === null) return;
 
         const nameCorrect = this.selectedName === this.currentQuestion.player.name;
