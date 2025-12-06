@@ -769,6 +769,45 @@
             color: #666;
             min-height: 1.5rem; /* Hauteur minimale pour la valeur */
         }
+
+        next-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            background: #667eea; /* Couleur par défaut */
+        }
+
+        .next-btn:hover {
+            background: #5568d3; /* Plus foncé au survol */
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .next-btn:active {
+            background: #4557c2; /* Encore plus foncé au clic */
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Pour le jeu de Pi spécifiquement */
+        #pi-game-page .next-btn {
+            background: #667eea;
+        }
+
+        #pi-game-page .next-btn:hover {
+            background: #5568d3;
+        }
+
+        #pi-game-page .next-btn:active {
+            background: #4557c2;
+        }
     </style>
 </head>
 <body>
@@ -984,6 +1023,9 @@
                     <div class="stat" style="text-align: center;">
                         <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">Position</div>
                         <div style="font-size: 1.8rem; font-weight: bold; color: #667eea;" id="pi-position">0</div>
+                    </div>
+                    <div class="pi-display" style="background: #f0f0f0; padding: 20px; border-radius: 10px; margin-bottom: 30px; text-align: center; font-size: 1.5rem; font-family: 'Courier New', monospace; letter-spacing: 2px; word-break: break-all;">
+                        <span style="color: #999;" id="pi-previous-digits"></span><span style="color: #667eea; font-weight: bold;">?</span>
                     </div>
                 </div>
 

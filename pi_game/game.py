@@ -3,11 +3,11 @@
 Pi Decimals Game - Ranked Mode
 Guess the next decimal of Pi
 """
+from datetime import datetime
 
 from flask import Blueprint, render_template, jsonify, request
 import json
 from pathlib import Path
-from datetime import datetime
 import random
 
 # Create blueprint
@@ -76,8 +76,7 @@ def get_question():
 def get_leaderboard():
     """Get top 20 scores."""
     leaderboard = load_leaderboard()
-    # Sort by position (desc), then by time (asc)
-    leaderboard.sort(key=lambda x: (-x['position'], x['time']))
+    leaderboard.sort(key=lambda x: (-x['position']))
     return jsonify({'leaderboard': leaderboard[:20]})
 
 
@@ -87,7 +86,7 @@ def submit_score():
     data = request.json
 
     # Validate data
-    if not data.get('name') or data.get('position') is None or data.get('time') is None:
+    if not data.get('name') or data.get('position') is None:
         return jsonify({'error': 'Missing required fields'}), 400
 
     leaderboard = load_leaderboard()
@@ -96,14 +95,13 @@ def submit_score():
     entry = {
         'name': data['name'][:20],
         'position': int(data['position']),
-        'time': float(data['time']),
         'date': datetime.now().isoformat()
     }
 
     leaderboard.append(entry)
 
     # Keep only top 100
-    leaderboard.sort(key=lambda x: (-x['position'], x['time']))
+    leaderboard.sort(key=lambda x: -x['position'])
     leaderboard = leaderboard[:100]
 
     save_leaderboard(leaderboard)

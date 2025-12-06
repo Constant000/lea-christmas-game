@@ -845,21 +845,38 @@ const piGame = {
 
             this.currentQuestion = data;
 
-            document.getElementById('pi-position').textContent = this.currentPosition;
-            document.getElementById('pi-previous-digits').textContent = data.previous_digits;
+            // Vérifications avec logs
+            const positionEl = document.getElementById('pi-position');
+            const previousEl = document.getElementById('pi-previous-digits');
+            const optionsEl = document.getElementById('pi-options');
+            const resultEl = document.getElementById('pi-result');
 
-            const optionsContainer = document.getElementById('pi-options');
-            optionsContainer.innerHTML = '';
+            console.log('Elements found:', {
+                position: !!positionEl,
+                previous: !!previousEl,
+                options: !!optionsEl,
+                result: !!resultEl
+            });
+
+            if (!positionEl || !previousEl || !optionsEl || !resultEl) {
+                console.error('Missing elements!');
+                return;
+            }
+
+            positionEl.textContent = this.currentPosition;
+            previousEl.textContent = data.previous_digits;
+
+            optionsEl.innerHTML = '';
 
             data.options.forEach(option => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
                 btn.textContent = option;
                 btn.onclick = () => this.checkAnswer(option, btn);
-                optionsContainer.appendChild(btn);
+                optionsEl.appendChild(btn);
             });
 
-            document.getElementById('pi-result').classList.add('hidden');
+            resultEl.classList.add('hidden');
 
         } catch (error) {
             console.error('Error loading question:', error);
