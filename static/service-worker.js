@@ -3,16 +3,17 @@ const CACHE_NAME = `lea-constant-games-${CACHE_VERSION}`;
 
 // Liste complète des fichiers à pré-cacher
 const PRECACHE_URLS = [
-  '/',
-  '/flag-game/',
-  '/toulouse/',
-  '/top14-quiz/',
-  '/static/game_results.js',
-  '/static/background.png',
-  '/static/results/0_1_2.png',
-  '/static/results/3_4.png',
-  '/static/results/7_8.png',
-  '/static/results/9_10.png',
+    '/',
+    '/flag_game/',
+    '/toulouse_game/',
+    '/top14_quiz/',
+    '/static/game_results.js',
+    '/static/background.png',
+    '/static/results/0-1-2.png',
+    '/static/results/3-4.png',
+    '/static/results/7-8.png',
+    '/static/results/7-8.png',
+    '/static/results/9-10.png',
 ];
 
 // Installation
